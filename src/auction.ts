@@ -1,36 +1,10 @@
-import got from 'got';
 import * as cheerio from 'cheerio';
-import { parse as parseBid ***REMOVED*** from './lib/tokenizer';
+import { parse as parseBid ***REMOVED*** from './lib/bid/tokenizer';
 import { Bid, Forum ***REMOVED*** from './@types/thread';
-import hexoLogger from 'hexo-log';
 import { parsePrice ***REMOVED*** from './util/price';
-import Cache from 'node-cache';
+import { getPage ***REMOVED*** from './util/network';
+
 import express from 'express';
-
-const log = hexoLogger();
-const forumsRequestCache = new Cache({
-  stdTTL: 60
-***REMOVED***);
-
-async function getPage(url: string): Promise<string | undefined> {
-  if (forumsRequestCache.has(url)) {
-    log.info(`Reading Page from Cache: ${url***REMOVED***`);
-    return forumsRequestCache.get(url);
-  ***REMOVED***
-
-  log.info(`Fetching Page: ${url***REMOVED***`);
-
-  const { body ***REMOVED*** = await got(url, {
-    retry: { limit: 2 ***REMOVED***,
-    headers: {
-      'User-Agent': 'Mozilla/5.0 New Auction'
-    ***REMOVED***
-  ***REMOVED***);
-
-  forumsRequestCache.set(url, body);
-
-  return body;
-***REMOVED***
 
 function parsePages(html: string, threadId: number): {
   posts: Forum.Reply[],

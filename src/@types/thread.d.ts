@@ -1,4 +1,4 @@
-import { ParseBidResults ***REMOVED*** from '../lib/tokenizer';
+import { ParseBidResults ***REMOVED*** from '../lib/bid/tokenizer';
 
 export namespace Forum {
   export interface Reply {
