@@ -41,6 +41,6 @@ dotenv.config();
   app.get('/hv/equip/*', fetchEquipmentInfo);
 
   app.listen(port, () => {
-    log.info(`Auto Pony listening at http://localhost:${port***REMOVED***`);
+    log.info(`API Server listening at http://localhost:${port***REMOVED***`);
   ***REMOVED***);
 ***REMOVED***)();
