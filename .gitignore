@@ -6,3 +6,4 @@ tmp/
 .tmp*
 temp*
 dist
+.env

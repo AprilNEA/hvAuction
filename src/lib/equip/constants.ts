@@ -1,405 +1,180 @@
-export const EQUIP_RANGES = [
-  ['ADB', 67.72, 75.92, ['axe', 'slaughter']] as const,
-  ['ADB', 53.39, 59.87, ['axe'], ['slaughter']] as const,
-  ['ADB', 59.02, 67.72, ['club', 'slaughter']] as const,
-  ['ADB', 46.12, 53.04, ['club'], ['slaughter']] as const,
-  ['Parry', 8.13, 9.04, ['club', 'nimble']] as const,
-  ['PCrit Chc', 8.85, 10.41, ['club', 'balance']] as const,
-  ['ADB', 44.08, 51.33, ['rapier', 'slaughter']] as const,
-  ['ADB', 33.65, 39.38, ['rapier'], ['slaughter']] as const,
-  ['Parry', 23.64, 26.94, ['rapier', 'nimble']] as const,
-  ['Parry', 16.29, 18.89, ['rapier'], ['nimble']] as const,
-  ['PCrit Chc', 8.85, 10.41, ['rapier', 'balance']] as const,
-  ['ADB', 53.22, 61.58, ['shortsword', 'slaughter']] as const,
-  ['ADB', 41.25, 47.92, ['shortsword'], ['slaughter']] as const,
-  ['Parry', 16.29, 18.89, ['shortsword']] as const,
-  ['PCrit Chc', 8.85, 10.41, ['shortsword', 'balance']] as const,
-  ['AS', 5.68, 6.54, ['shortsword', 'swiftness']] as const,
-  ['ADB', 40.25, 46.21, ['wakizashi', 'slaughter']] as const,
-  ['ADB', 30.49, 35.11, ['wakizashi'], ['slaughter']] as const,
-  ['Parry', 27.31, 30.53, ['wakizashi', 'nimble']] as const,
-  ['Parry', 19.97, 22.48, ['wakizashi'], ['nimble']] as const,
-  ['PCrit Chc', 8.85, 10.41, ['wakizashi', 'balance']] as const,
-  ['AS', 15.88, 18.57, ['wakizashi', 'swiftness']] as const,
-
-  ['ADB', 73.01, 82.07, ['estoc', 'slaughter']] as const,
-  ['ADB', 57.83, 64.99, ['estoc'], ['slaughter']] as const,
-  ['PCrit Chc', 11.98, 13.56, ['estoc', 'balance']] as const,
-  ['ADB', 86.35, 98.47, ['longsword', 'slaughter']] as const,
-  ['ADB', 68.92, 78.66, ['longsword'], ['slaughter']] as const,
-  ['PCrit Chc', 12.56, 14.19, ['longsword', 'balance']] as const,
-  ['ADB', 73.02, 82.07, ['mace', 'slaughter']] as const,
-  ['ADB', 57.82, 64.99, ['mace'], ['slaughter']] as const,
-  ['PCrit Chc', 11.98, 13.59, ['mace', 'balance']] as const,
-  ['ADB', 72.50, 82.07, ['katana', 'slaughter']] as const,
-  ['ADB', 57.38, 64.99, ['katana'], ['slaughter']] as const,
-  ['PCrit Chc', 12.56, 14.19, ['katana', 'balance']] as const,
-
-  ['MDB', 45.85, 52.2, ['katalox', 'destruction']] as const,
-  ['MDB', 28.09, 32.4, ['katalox'], ['destruction']] as const,
-  ['MDB', 45.08, 51.71, ['redwood', 'destruction']] as const,
-  ['MDB', 27.76, 31.99, ['redwood'], ['destruction']] as const,
-  ['MDB', 44.93, 51.71, ['willow', 'destruction']] as const,
-  ['MDB', 27.76, 31.99, ['willow'], ['destruction']] as const,
-  ['MDB', 27.76, 31.99, ['oak']] as const,
-
-  ['EDB', 33.84, 36.91, ['hallowed katalox', 'heimdall']] as const,
-  ['EDB', 19.27, 21.77, ['hallowed katalox'], ['heimdall']] as const,
-  ['EDB', 34.07, 36.52, ['demonic katalox', 'fenrir']] as const,
-  ['EDB', 18.97, 21.77, ['demonic katalox'], ['fenrir']] as const,
-  ['DProf', 14.41, 16.24, ['hallowed katalox', 'heaven-sent']] as const,
-  ['DProf', 7.10, 8.29, ['hallowed katalox'], ['heaven-sent']] as const,
-  ['FProf', 14.41, 16.24, ['demonic katalox', 'demon-fiend']] as const,
-  ['FProf', 7.10, 8.29, ['demonic katalox'], ['demon-fiend']] as const,
-
-  ['EDB', 37.70, 42.68, ['hallowed oak', 'heimdall']] as const,
-  ['EDB', 23.00, 26.60, ['hallowed oak'], ['heimdall']] as const,
-  ['DProf', 5.58, 6.45, ['hallowed oak']] as const,
-  ['EProf', 5.57, 6.45, ['fiery oak']] as const,
-  ['EProf', 5.57, 6.45, ['arctic oak']] as const,
-
-  ['EDB', 34.18, 37.32, ['tempestuous redwood', 'freyr']] as const,
-  ['EDB', 18.98, 21.78, ['tempestuous redwood'], ['freyr']] as const,
-  ['EDB', 34.42, 37.85, ['shocking redwood', 'mjolnir']] as const,
-  ['EDB', 18.97, 21.78, ['shocking redwood'], ['mjolnir']] as const,
-  ['EDB', 33.52, 37.85, ['arctic redwood', 'niflheim']] as const,
-  ['EDB', 19.22, 21.77, ['arctic redwood'], ['niflheim']] as const,
-  ['EDB', 34.44, 37.4, ['fiery redwood', 'surtr']] as const,
-  ['EDB', 18.87, 21.77, ['fiery redwood'], ['surtr']] as const,
-  ['EProf', 14.60, 16.24, ['redwood', 'elementalist']] as const,
-  ['EProf', 7.19, 8.29, ['redwood'], ['elementalist']] as const,
-
-  ['EDB', 16.33, 18.56, ['tempestuous willow']] as const,
-  ['EDB', 16.47, 18.56, ['shocking willow']] as const,
-  ['EDB', 22.92, 26.60, ['demonic willow']] as const,
-  ['EDB', 10.20, 11.33, ['fiery willow']] as const,
-  ['EDB', 10.20, 11.33, ['arctic willow']] as const,
-  ['EDB', 10.20, 11.33, ['hallowed willow']] as const,
-  ['EProf', 5.26, 6.15, ['tempestuous willow']] as const,
-  ['EProf', 5.26, 6.15, ['shocking willow']] as const,
-  ['FProf', 5.26, 6.15, ['demonic willow']] as const,
-  ['EProf', 5.26, 6.15, ['fiery willow']] as const,
-  ['EProf', 5.26, 6.15, ['arctic willow']] as const,
-
-  ['Int', 6.11, 7.22, ['katalox']] as const,
-  ['Wis', 4.13, 4.82, ['katalox']] as const,
-  ['Int', 5.46, 6.33, ['redwood']] as const,
-  ['Wis', 5.46, 6.33, ['redwood']] as const,
-  ['Int', 4.13, 4.83, ['willow']] as const,
-  ['Wis', 6.12, 7.23, ['willow']] as const,
-  ['Int', 4.14, 4.83, ['oak']] as const,
-  ['Wis', 6.12, 7.23, ['oak']] as const,
-
-  ['BLK', 33.55, 37.52, ['buckler', 'barrier']] as const,
-  ['BLK', 27.64, 31.03, ['buckler'], ['barrier']] as const,
-  ['Parry', 8.15, 9.04, ['buckler', 'nimble']] as const,
-  ['BLK', 32.63, 36.02, ['kite']] as const,
-  ['BLK', 35.63, 38.52, [' force']] as const,
-
-  ['EDB', 15.12, 16.97, ['phase cap']] as const,
-  ['Int', 6.00, 7.08, ['phase cap']] as const,
-  ['Wis', 6.00, 7.08, ['phase cap']] as const,
-  ['Agi', 5.07, 6.03, ['phase cap']] as const,
-  ['Evd', 4.7, 5.28, ['phase cap']] as const,
-  ['PMit', 3.01, 3.38, ['phase cap']] as const,
-  ['CS', 2.99, 3.47, ['phase cap', 'charged']] as const,
-  ['MDB', 3.68, 4.23, ['phase cap', 'radiant']] as const,
-  ['MCrit Dmg', 3.49, 3.90, ['phase cap', 'mystic']] as const,
-  ['Mana C', 3.31, 3.61, ['phase cap', 'frugal']] as const,
-
-  ['EDB', 18.02, 20.18, ['phase robe']] as const,
-  ['Int', 7.14, 8.43, ['phase robe']] as const,
-  ['Wis', 7.14, 8.43, ['phase robe']] as const,
-  ['Agi', 6.03, 7.17, ['phase robe']] as const,
-  ['Evd', 5.60, 6.28, ['phase robe']] as const,
-  ['PMit', 3.57, 4.01, ['phase robe']] as const,
-  ['CS', 3.48, 4.06, ['phase robe', 'charged']] as const,
-  ['MDB', 4.25, 4.90, ['phase robe', 'radiant']] as const,
-  ['MCrit Dmg', 4.16, 4.61, ['phase robe', 'mystic']] as const,
-  ['Mana C', 3.61, 4.11, ['phase robe', 'frugal']] as const,
-
-  ['EDB', 13.66, 15.36, ['phase gloves']] as const,
-  ['Int', 5.43, 6.42, ['phase gloves']] as const,
-  ['Wis', 5.43, 6.42, ['phase gloves']] as const,
-  ['Agi', 4.59, 5.46, ['phase gloves']] as const,
-  ['Evd', 4.25, 4.78, ['phase gloves']] as const,
-  ['PMit', 2.73, 3.07, ['phase gloves']] as const,
-  ['CS', 2.75, 3.18, ['phase gloves', 'charged']] as const,
-  ['MDB', 3.42, 3.90, ['phase gloves', 'radiant']] as const,
-  ['MCrit Dmg', 3.14, 3.51, ['phase gloves', 'mystic']] as const,
-  ['Mana C', 3.10, 3.41, ['phase gloves', 'frugal']] as const,
-
-  ['EDB', 16.57, 18.58, ['phase pants']] as const,
-  ['Int', 6.57, 7.77, ['phase pants']] as const,
-  ['Wis', 6.57, 7.77, ['phase pants']] as const,
-  ['Agi', 5.55, 6.6, ['phase pants']] as const,
-  ['Evd', 5.15, 5.78, ['phase pants']] as const,
-  ['PMit', 3.28, 3.7, ['phase pants']] as const,
-  ['CS', 3.23, 3.77, ['phase pants', 'charged']] as const,
-  ['MDB', 3.91, 4.53, ['phase pants', 'radiant']] as const,
-  ['MCrit Dmg', 3.82, 4.28, ['phase pants', 'mystic']] as const,
-  ['Mana C', 3.50, 4.91, ['phase pants', 'frugal']] as const,
-
-  ['EDB', 12.22, 13.75, ['phase shoes']] as const,
-  ['Int', 4.86, 5.73, ['phase shoes']] as const,
-  ['Wis', 4.86, 5.73, ['phase shoes']] as const,
-  ['Agi', 4.11, 4.89, ['phase shoes']] as const,
-  ['Evd', 3.8, 4.28, ['phase shoes']] as const,
-  ['PMit', 2.44, 2.75, ['phase shoes']] as const,
-  ['CS', 2.50, 2.89, ['phase shoes', 'charged']] as const,
-  ['MDB', 3.10, 3.57, ['phase shoes', 'radiant']] as const,
-  ['MCrit Dmg', 2.80, 3.14, ['phase shoes', 'mystic']] as const,
-  ['Mana C', 2.81, 3.11, ['phase shoes', 'frugal']] as const,
-
-  ['DProf', 7.38, 8.29, ['cotton cap', 'heaven-sent']] as const,
-  ['DProf', 8.79, 9.89, ['cotton robe', 'heaven-sent']] as const,
-  ['DProf', 6.68, 7.50, ['cotton gloves', 'heaven-sent']] as const,
-  ['DProf', 8.08, 9.09, ['cotton pants', 'heaven-sent']] as const,
-  ['DProf', 5.97, 6.70, ['cotton shoes', 'heaven-sent']] as const,
-
-  ['EProf', 7.38, 8.29, ['cotton cap', 'elementalist']] as const,
-  ['EProf', 8.79, 9.89, ['cotton robe', 'elementalist']] as const,
-  ['EProf', 6.68, 7.50, ['cotton gloves', 'elementalist']] as const,
-  ['EProf', 8.08, 9.09, ['cotton pants', 'elementalist']] as const,
-  ['EProf', 5.97, 6.70, ['cotton shoes', 'elementalist']] as const,
-
-  ['FProf', 7.38, 8.29, ['cotton cap', 'demon-fiend']] as const,
-  ['FProf', 8.79, 9.89, ['cotton robe', 'demon-fiend']] as const,
-  ['FProf', 6.68, 7.50, ['cotton gloves', 'demon-fiend']] as const,
-  ['FProf', 8.08, 9.09, ['cotton pants', 'demon-fiend']] as const,
-  ['FProf', 5.97, 6.70, ['cotton shoes', 'demon-fiend']] as const,
-
-  ['Int', 5.31, 6.33, ['cotton cap']] as const,
-  ['Wis', 5.31, 6.33, ['cotton cap']] as const,
-  ['Agi', 4.08, 4.83, ['cotton cap']] as const,
-  ['Evd', 3.45, 4.03, ['cotton cap']] as const,
-  ['PMit', 6.03, 6.74, ['cotton cap', 'protection']] as const,
-  ['PMit', 3.95, 4.43, ['cotton cap'], ['protection']] as const,
-  ['CS', 2.99, 3.47, ['cotton cap', 'charged']] as const,
-  ['Mana C', 3.31, 3.61, ['cotton cap', 'frugal']] as const,
-
-  ['Int', 6.3, 7.53, ['cotton robe']] as const,
-  ['Wis', 6.3, 7.53, ['cotton robe']] as const,
-  ['Agi', 4.83, 5.73, ['cotton robe']] as const,
-  ['Evd', 4.10, 4.78, ['cotton robe']] as const,
-  ['PMit', 7.21, 8.04, ['cotton robe', 'protection']] as const,
-  ['PMit', 4.71, 5.27, ['cotton robe'], ['protection']] as const,
-  ['CS', 3.49, 4.06, ['cotton robe', 'charged']] as const,
-  ['Mana C', 3.81, 4.11, ['cotton robe', 'frugal']] as const,
-
-  ['Int', 4.80, 5.73, ['cotton gloves']] as const,
-  ['Wis', 4.80, 5.73, ['cotton gloves']] as const,
-  ['Agi', 3.69, 4.38, ['cotton gloves']] as const,
-  ['Evd', 3.13, 3.65, ['cotton gloves']] as const,
-  ['PMit', 5.37, 6.09, ['cotton gloves', 'protection']] as const,
-  ['PMit', 3.57, 4.01, ['cotton gloves'], ['protection']] as const,
-  ['CS', 2.74, 3.18, ['cotton gloves', 'charged']] as const,
-  ['Mana C', 3.11, 3.41, ['cotton gloves', 'frugal']] as const,
-
-  ['Int', 5.82, 6.93, ['cotton pants']] as const,
-  ['Wis', 5.82, 6.93, ['cotton pants']] as const,
-  ['Agi', 4.47, 5.28, ['cotton pants']] as const,
-  ['Evd', 3.78, 4.4, ['cotton pants']] as const,
-  ['PMit', 6.56, 7.39, ['cotton pants', 'protection']] as const,
-  ['PMit', 4.33, 4.85, ['cotton pants'], ['protection']] as const,
-  ['CS', 3.23, 3.77, ['cotton pants', 'charged']] as const,
-  ['Mana C', 3.51, 3.91, ['cotton pants', 'frugal']] as const,
-
-  ['Int', 4.32, 5.13, ['cotton shoes']] as const,
-  ['Wis', 4.32, 5.13, ['cotton shoes']] as const,
-  ['Agi', 3.33, 3.93, ['cotton shoes']] as const,
-  ['Evd', 2.80, 3.28, ['cotton shoes']] as const,
-  ['PMit', 4.86, 5.38, ['cotton shoes', 'protection']] as const,
-  ['PMit', 3.19, 3.59, ['cotton shoes'], ['protection']] as const,
-  ['CS', 2.51, 2.85, ['cotton shoes', 'charged']] as const,
-  ['Mana C', 2.81, 3.05, ['cotton shoes', 'frugal']] as const,
-
-  ['Evd', 5.79, 6.67, ['shade helmet', 'shadowdancer']] as const,
-  ['Evd', 5.79, 6.67, ['shade helmet', 'fleet']] as const,
-  ['Evd', 3.77, 4.42, ['shade helmet', 'negation']] as const,
-  ['Evd', 3.85, 4.45, ['shade helmet', 'arcanist']] as const,
-  ['ADB', 9.44, 11.33, ['shade helmet', 'arcanist']] as const,
-  ['ADB', 9.37, 11.25, ['shade helmet'], ['arcanist']] as const,
-  ['AS', 3.14, 3.72, ['shade helmet', 'agile', 'arcanist']] as const,
-  ['AS', 3.12, 3.69, ['shade helmet', 'agile'], ['arcanist']] as const,
-  ['PCrit Dmg', 2.80, 3.14, ['shade helmet', 'savage', 'arcanist']] as const,
-  ['PCrit Dmg', 2.78, 3.12, ['shade helmet', 'savage'], ['arcanist']] as const,
-
-  ['Evd', 6.88, 7.94, ['shade breastplate', 'shadowdancer']] as const,
-  ['Evd', 6.88, 7.94, ['shade breastplate', 'fleet']] as const,
-  ['Evd', 4.47, 5.24, ['shade breastplate', 'negation']] as const,
-  ['Evd', 4.50, 5.27, ['shade breastplate', 'arcanist']] as const,
-  ['ADB', 11.16, 13.39, ['shade breastplate', 'arcanist']] as const,
-  ['ADB', 11.08, 13.30, ['shade breastplate'], ['arcanist']] as const,
-  ['AS', 3.68, 4.34, ['shade breastplate', 'agile', 'arcanist']] as const,
-  ['AS', 3.65, 4.31, ['shade breastplate', 'agile'], ['arcanist']] as const,
-  ['PCrit Dmg', 3.32, 3.75, ['shade breastplate', 'savage', 'arcanist']] as const,
-  ['PCrit Dmg', 3.31, 3.72, ['shade breastplate', 'savage'], ['arcanist']] as const,
-
-  ['Evd', 5.27, 6.04, ['shade gauntlets', 'shadowdancer']] as const,
-  ['Evd', 5.27, 6.04, ['shade gauntlets', 'fleet']] as const,
-  ['Evd', 3.42, 4.02, ['shade gauntlets', 'negation']] as const,
-  ['Evd', 3.44, 4.05, ['shade gauntlets', 'arcanist']] as const,
-  ['ADB', 8.57, 10.32, ['shade gauntlets', 'arcanist']] as const,
-  ['ADB', 8.51, 10.23, ['shade gauntlets'], ['arcanist']] as const,
-  ['AS', 2.90, 3.42, ['shade gauntlets', 'agile', 'arcanist']] as const,
-  ['AS', 2.88, 3.40, ['shade gauntlets', 'agile'], ['arcanist']] as const,
-  ['PCrit Dmg', 2.53, 2.84, ['shade gauntlets', 'savage', 'arcanist']] as const,
-  ['PCrit Dmg', 2.51, 2.82, ['shade gauntlets', 'savage'], ['arcanist']] as const,
-
-  ['Evd', 6.35, 7.32, ['shade leggings', 'shadowdancer']] as const,
-  ['Evd', 6.35, 7.32, ['shade leggings', 'fleet']] as const,
-  ['Evd', 4.12, 4.84, ['shade leggings', 'negation']] as const,
-  ['Evd', 4.15, 4.87, ['shade leggings', 'arcanist']] as const,
-  ['ADB', 10.30, 12.37, ['shade leggings', 'arcanist']] as const,
-  ['ADB', 10.23, 12.28, ['shade leggings'], ['arcanist']] as const,
-  ['AS', 3.39, 4.06, ['shade leggings', 'agile', 'arcanist']] as const,
-  ['AS', 3.37, 4.03, ['shade leggings', 'agile'], ['arcanist']] as const,
-  ['PCrit Dmg', 3.07, 3.44, ['shade leggings', 'savage', 'arcanist']] as const,
-  ['PCrit Dmg', 3.05, 3.42, ['shade leggings', 'savage'], ['arcanist']] as const,
-
-  ['Evd', 4.67, 5.39, ['shade boots', 'shadowdancer']] as const,
-  ['Evd', 4.67, 5.33, ['shade boots', 'fleet']] as const,
-  ['Evd', 3.07, 3.59, ['shade boots', 'negation']] as const,
-  ['Evd', 3.10, 3.62, ['shade boots', 'arcanist']] as const,
-  ['ADB', 7.72, 9.29, ['shade boots', 'arcanist']] as const,
-  ['ADB', 7.67, 9.20, ['shade boots'], ['arcanist']] as const,
-  ['AS', 2.61, 3.09, ['shade boots', 'agile']] as const,
-  ['AS', 2.59, 3.07, ['shade boots', 'agile'], ['arcanist']] as const,
-  ['PCrit Dmg', 2.27, 2.54, ['shade boots', 'savage', 'arcanist']] as const,
-  ['PCrit Dmg', 2.25, 2.52, ['shade boots', 'savage'], ['arcanist']] as const,
-
-  ['BLK', 5.20, 6.09, ['plate helmet', 'shielding']] as const,
-  ['PMit', 13.32, 14.30, ['plate helmet', 'protection']] as const,
-  ['PMit', 10.12, 12.73, ['plate helmet'], ['protection']] as const,
-  ['MMit', 11.80, 13.29, ['plate helmet', 'warding']] as const,
-  ['MMit', 6.91, 7.76, ['plate helmet'], ['warding']] as const,
-
-  ['BLK', 6.02, 7.09, ['plate cuirass', 'shielding']] as const,
-  ['PMit', 15.96, 17.12, ['plate cuirass', 'protection']] as const,
-  ['PMit', 12.10, 12.83, ['plate cuirass'], ['protection']] as const,
-  ['MMit', 14.01, 15.90, ['plate cuirass', 'warding']] as const,
-  ['MMit', 8.26, 9.27, ['plate cuirass'], ['warding']] as const,
-
-  ['BLK', 4.81, 5.59, ['plate gauntlets', 'shielding']] as const,
-  ['PMit', 12.04, 12.90, ['plate gauntlets', 'protection']] as const,
-  ['PMit', 9.14, 9.68, ['plate gauntlets'], ['protection']] as const,
-  ['MMit', 10.60, 12.00, ['plate gauntlets', 'warding']] as const,
-  ['MMit', 6.25, 7.02, ['plate gauntlets'], ['warding']] as const,
-
-  ['BLK', 5.60, 6.59, ['plate greaves', 'shielding']] as const,
-  ['PMit', 14.69, 15.71, ['plate greaves', 'protection']] as const,
-  ['PMit', 11.11, 11.78, ['plate greaves'], ['protection']] as const,
-  ['MMit', 12.88, 14.61, ['plate greaves', 'warding']] as const,
-  ['MMit', 7.58, 8.52, ['plate greaves'], ['warding']] as const,
-
-  ['BLK', 4.38, 5.03, ['plate sabatons', 'shielding']] as const,
-  ['PMit', 10.71, 11.49, ['plate sabatons', 'protection']] as const,
-  ['PMit', 8.14, 8.63, ['plate sabatons'], ['protection']] as const,
-  ['MMit', 9.41, 10.67, ['plate sabatons', 'warding']] as const,
-  ['MMit', 5.57, 6.25, ['plate sabatons'], ['warding']] as const,
-
-  ['ADB', 21.89, 25.73, ['power helmet', 'slaughter']] as const,
-  ['ADB', 15.14, 18.04, ['power helmet'], ['slaughter']] as const,
-  ['PCrit Chc', 4.92, 5.63, ['power helmet', 'balance']] as const,
-  ['PCrit Dmg', 3.94, 4.36, ['power helmet', 'savage']] as const,
-  ['PMit', 10.17, 11.16, ['power helmet', 'protection']] as const,
-  ['PMit', 7.50, 8.11, ['power helmet'], ['protection']] as const,
-  ['MMit', 10.16, 11.48, ['power helmet', 'warding']] as const,
-  ['MMit', 5.57, 6.26, ['power helmet'], ['warding']] as const,
-
-  ['ADB', 25.99, 30.68, ['power armor', 'slaughter']] as const,
-  ['ADB', 17.96, 21.46, ['power armor'], ['slaughter']] as const,
-  ['PCrit Chc', 5.90, 6.80, ['power armor', 'balance']] as const,
-  ['PCrit Dmg', 4.68, 5.21, ['power armor', 'savage']] as const,
-  ['PMit', 12.17, 13.34, ['power armor', 'protection']] as const,
-  ['PMit', 8.95, 9.69, ['power armor'], ['protection']] as const,
-  ['MMit', 12.11, 13.73, ['power armor', 'warding']] as const,
-  ['MMit', 6.64, 7.46, ['power armor'], ['warding']] as const,
-
-  ['ADB', 19.86, 23.25, ['power gauntlets', 'slaughter']] as const,
-  ['ADB', 13.69, 16.33, ['power gauntlets'], ['slaughter']] as const,
-  ['PCrit Chc', 4.47, 5.10, ['power gauntlets', 'balance']] as const,
-  ['PCrit Dmg', 3.55, 3.94, ['power gauntlets', 'savage']] as const,
-  ['PMit', 9.23, 10.09, ['power gauntlets', 'protection']] as const,
-  ['PMit', 6.77, 7.33, ['power gauntlets'], ['protection']] as const,
-  ['MMit', 9.11, 10.36, ['power gauntlets', 'warding']] as const,
-  ['MMit', 5.03, 5.65, ['power gauntlets'], ['warding']] as const,
-
-  ['ADB', 23.94, 28.20, ['power leggings', 'slaughter']] as const,
-  ['ADB', 16.59, 19.75, ['power leggings'], ['slaughter']] as const,
-  ['PCrit Chc', 5.39, 6.25, ['power leggings', 'balance']] as const,
-  ['PCrit Dmg', 4.29, 4.72, ['power leggings', 'savage']] as const,
-  ['PMit', 11.18, 12.27, ['power leggings', 'protection']] as const,
-  ['PMit', 8.24, 8.91, ['power leggings'], ['protection']] as const,
-  ['MMit', 11.12, 12.61, ['power leggings', 'warding']] as const,
-  ['MMit', 6.12, 6.86, ['power leggings'], ['warding']] as const,
-
-  ['ADB', 17.73, 20.77, ['power boots', 'slaughter']] as const,
-  ['ADB', 12.32, 14.62, ['power boots'], ['slaughter']] as const,
-  ['PCrit Chc', 3.94, 4.54, ['power boots', 'balance']] as const,
-  ['PCrit Dmg', 3.14, 3.51, ['power boots', 'savage']] as const,
-  ['PMit', 8.22, 8.97, ['power boots', 'protection']] as const,
-  ['PMit', 6.06, 6.54, ['power boots'], ['protection']] as const,
-  ['MMit', 8.15, 9.23, ['power boots', 'warding']] as const,
-  ['MMit', 4.51, 5.05, ['power boots'], ['warding']] as const
+export const SHORT_SUMMARY_STATS_CONFIG = [
+  {
+    nameTests: [
+      /axe/, /club/,
+      /rapier/, /shortsword/,
+      /wakizashi/, /estoc/,
+      /longsword/, /mace/,
+      /katana/
+    ],
+    statsToShow: ['ADB']
+  ***REMOVED***,
+  { nameTests: [/staff/], statsToShow: ['MDB'] ***REMOVED***,
+  { nameTests: [/hallowed.+staff/], statsToShow: ['Holy EDB'] ***REMOVED***,
+  { nameTests: [/demonic.+staff/], statsToShow: ['Dark EDB'] ***REMOVED***,
+  { nameTests: [/tempestuous.+staff/], statsToShow: ['Wind EDB'] ***REMOVED***,
+  { nameTests: [/shocking.+staff/], statsToShow: ['Elec EDB'] ***REMOVED***,
+  { nameTests: [/arctic.+staff/], statsToShow: ['Cold EDB'] ***REMOVED***,
+  { nameTests: [/fiery.+staff/], statsToShow: ['Fire EDB'] ***REMOVED***,
+  { nameTests: [/\sshield\s/, /buckler/], statsToShow: ['BLK'] ***REMOVED***,
+  {
+    nameTests: [/cotton.+heaven-sent/],
+    statsToShow: ['Divine Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+demon-fiend/],
+    statsToShow: ['Forb Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+elementalist/],
+    statsToShow: ['Elem Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+curse-weaver/],
+    statsToShow: ['Depr Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+earth-walker/],
+    statsToShow: ['Sup Prof']
+  ***REMOVED***,
+  { nameTests: [/phase.+heimdall/], statsToShow: ['Holy EDB'] ***REMOVED***,
+  { nameTests: [/phase.+fenrir/], statsToShow: ['Dark EDB'] ***REMOVED***,
+  { nameTests: [/phase.+freyr/], statsToShow: ['Wind EDB'] ***REMOVED***,
+  { nameTests: [/phase.+mjolnir/], statsToShow: ['Elec EDB'] ***REMOVED***,
+  { nameTests: [/phase.+niflheim/], statsToShow: ['Cold EDB'] ***REMOVED***,
+  { nameTests: [/phase.+surtr/], statsToShow: ['Fire EDB'] ***REMOVED***,
+  { nameTests: [/shade/], statsToShow: ['ADB'] ***REMOVED***,
+  { nameTests: [/power/], statsToShow: ['ADB'] ***REMOVED***
 ];
 
-export const EQUIP_STATS_NAMES = [
-  ['ADB', 'Physical Damage', 'Attack Damage', 0.0854, 250 / 15],
-  ['Phy CC', 'Physical Crit Chance', 'Attack Crit Chance', 0.0105, 2000],
-  ['Phy CD', null, 'Attack Crit Damage', 0.01, Infinity],
-  ['Phy ACC', 'Physical Hit Chance', 'Attack Accuracy', 0.06069, 5000],
-  ['Attack Speed', null, 'Attack Speed', 0.0481, Infinity],
-  ['MDB', 'Magical Damage', 'Magic Damage', 0.082969, 250 / 11],
-  ['Mag CC', 'Magical Crit Chance', 'Magic Crit Chance', 0.0114, 2000],
-  ['Mag CD', null, 'Spell Crit Damage', 0.01, Infinity],
-  ['Mag ACC', 'Magical Hit Chance', 'Magic Accuracy', 0.0491, 5000],
-  ['Cast Speed', null, 'Casting Speed', 0.0489, Infinity],
+export const EXTENDED_SUMMARY_STATS_CONFIG = [
+  {
+    nameTests: [/axe/, /club/],
+    statsToShow: ['ADB', 'Str', 'Dex', 'Agi']
+  ***REMOVED***,
+  {
+    nameTests: [/rapier/, /shortsword/, /wakizashi/],
+    statsToShow: ['ADB', 'Parry', 'Str', 'Dex', 'Agi']
+  ***REMOVED***,
+  {
+    nameTests: [/estoc/, /longsword/, /mace/, /katana/],
+    statsToShow: ['ADB', 'Str', 'Dex', 'Agi']
+  ***REMOVED***,
+  { nameTests: [/staff/], statsToShow: ['MDB', 'Int', 'Wis'] ***REMOVED***,
+  {
+    nameTests: [/hallowed.+staff/],
+    statsToShow: ['Holy EDB', 'Divine Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/demonic.+staff/],
+    statsToShow: ['Dark EDB', 'Forb Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/tempestuous.+staff/],
+    statsToShow: ['Wind EDB', 'Elem Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/shocking.+staff/],
+    statsToShow: ['Elec EDB', 'Elem Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/arctic.+staff/],
+    statsToShow: ['Cold EDB', 'Elem Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/fiery.+staff/],
+    statsToShow: ['Fire EDB', 'Elem Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/staff/],
+    statsToShow: ['Depr Prof', 'CR', 'Burden']
+  ***REMOVED***,
+  {
+    nameTests: [/\sshield\s/, /buckler/],
+    statsToShow: [
+      'BLK', 'Pmit',
+      'Mmit', 'Str',
+      'Dex', 'End',
+      'Agi', 'Crus',
+      'Slas', 'Pier'
+    ]
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+heaven-sent/],
+    statsToShow: ['Divine Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+demon-fiend/],
+    statsToShow: ['Forb Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+elementalist/],
+    statsToShow: ['Elem Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+curse-weaver/],
+    statsToShow: ['Depr Prof']
+  ***REMOVED***,
+  {
+    nameTests: [/cotton.+earth-walker/],
+    statsToShow: ['Sup Prof']
+  ***REMOVED***,
+  { nameTests: [/phase.+heimdall/], statsToShow: ['Holy EDB'] ***REMOVED***,
+  { nameTests: [/phase.+fenrir/], statsToShow: ['Dark EDB'] ***REMOVED***,
+  { nameTests: [/phase.+freyr/], statsToShow: ['Wind EDB'] ***REMOVED***,
+  { nameTests: [/phase.+mjolnir/], statsToShow: ['Elec EDB'] ***REMOVED***,
+  { nameTests: [/phase.+niflheim/], statsToShow: ['Cold EDB'] ***REMOVED***,
+  { nameTests: [/phase.+surtr/], statsToShow: ['Fire EDB'] ***REMOVED***,
+  {
+    nameTests: [/cotton/, /phase/],
+    statsToShow: [
+      'MDB', 'Int',
+      'Wis', 'Cast Speed',
+      'Mag CD', 'Evd',
+      'Agi', 'Pmit',
+      'Mmit', 'Crus'
+    ]
+  ***REMOVED***,
+  {
+    nameTests: [/leather/, /shade/],
+    statsToShow: [
+      'ADB', 'Attack Speed',
+      'Pmit', 'Mmit',
+      'Evd', 'Res',
+      'Str', 'Dex',
+      'End', 'Agi',
+      'Int', 'Wis',
+      'Crus', 'Slas',
+      'Pier'
+    ]
+  ***REMOVED***,
+  { nameTests: [/leather/], statsToShow: ['Burden'] ***REMOVED***,
+  { nameTests: [/leather/, /shade/], statsToShow: ['Interf'] ***REMOVED***,
+  { nameTests: [/\splate/], statsToShow: ['BLK'] ***REMOVED***,
+  { nameTests: [/power/], statsToShow: ['ADB'] ***REMOVED***,
+  {
+    nameTests: [/\splate/, /power/],
+    statsToShow: [
+      'Str', 'Dex',
+      'End', 'Pmit',
+      'Mmit', 'Phy CC',
+      'Phy CD', 'Crus',
+      'Slas', 'Pier',
+      'Burden', 'Interf'
+    ]
+  ***REMOVED***
+];
 
-  ['Str', 'Strength Bonus', 'Strength', 0.03, 250 / 7],
-  ['Dex', 'Dexterity Bonus', 'Dexterity', 0.03, 250 / 7],
-  ['End', 'Endurance Bonus', 'Endurance', 0.03, 250 / 7],
-  ['Agi', 'Agility Bonus', 'Agility', 0.03, 250 / 7],
-  ['Int', 'Intelligence Bonus', 'Intelligence', 0.03, 250 / 7],
-  ['Wis', 'Wisdom Bonus', 'Wisdom', 0.03, 250 / 7],
-  ['Evd', 'Evade Chance', 'Evade Chance', 0.025, 2000],
-  ['Res', 'Resist Chance', 'Resist Chance', 0.0804, 2000],
+// const weightedValueConfig = [].map(line => ({ 'tag': line[0], 'nameTest': line[1], 'statsWeight': Object.entries(line[2]).map(entry => ({ 'name': entry[0], 'value': entry[1] ***REMOVED***)) ***REMOVED***));
 
-  ['Pmit', 'Physical Defense', 'Physical Mitigation', 0.021, 2000],
-  ['Mmit', 'Magical Defense', 'Magical Mitigation', 0.0201, 2000],
-  ['BLK', 'Block Chance', 'Block Chance', 0.0998, 2000],
-  ['Parry', 'Parry Chance', 'Parry Chance', 0.0894, 2000],
-  ['Mana C', null, 'Mana Conservation', 0.1, Infinity],
-  ['Crus', 'Crushing Mitigation', 'Crushing', 0.0155, Infinity],
-  ['Slas', 'Slashing Mitigation', 'Slashing', 0.0153, Infinity],
-  ['Pier', 'Piercing Mitigation', 'Piercing', 0.015, Infinity],
-  ['Burden', null, 'Burden', 0, Infinity],
-  ['Interf', null, 'Interference', 0, Infinity],
+// statNames: [abbreviated name, forging name, html name, base multiplier, level scaling factor]. Base multiplier is necessary for precise reverse forge calculations
+export const EQUIPMENT_STAT_NAMES = [{ abbr: 'ADB', forgeName: 'Physical Damage', htmlName: 'Attack Damage', baseMultiplier: 0.0854, levelScalingFactor: 16.666666666666668 ***REMOVED***, { abbr: 'Phy CC', forgeName: 'Physical Crit Chance', htmlName: 'Attack Crit Chance', baseMultiplier: 0.0105, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Phy CD', forgeName: null, htmlName: 'Attack Crit Damage', baseMultiplier: 0.01, levelScalingFactor: null ***REMOVED***, { abbr: 'Phy ACC', forgeName: 'Physical Hit Chance', htmlName: 'Attack Accuracy', baseMultiplier: 0.06069, levelScalingFactor: 5000 ***REMOVED***, { abbr: 'Attack Speed', forgeName: null, htmlName: 'Attack Speed', baseMultiplier: 0.0481, levelScalingFactor: null ***REMOVED***, { abbr: 'MDB', forgeName: 'Magical Damage', htmlName: 'Magic Damage', baseMultiplier: 0.082969, levelScalingFactor: 22.727272727272727 ***REMOVED***, { abbr: 'Mag CC', forgeName: 'Magical Crit Chance', htmlName: 'Magic Crit Chance', baseMultiplier: 0.0114, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Mag CD', forgeName: null, htmlName: 'Spell Crit Damage', baseMultiplier: 0.01, levelScalingFactor: null ***REMOVED***, { abbr: 'Mag ACC', forgeName: 'Magical Hit Chance', htmlName: 'Magic Accuracy', baseMultiplier: 0.0491, levelScalingFactor: 5000 ***REMOVED***, { abbr: 'Cast Speed', forgeName: null, htmlName: 'Casting Speed', baseMultiplier: 0.0489, levelScalingFactor: null ***REMOVED***, { abbr: 'Str', forgeName: 'Strength Bonus', htmlName: 'Strength', baseMultiplier: 0.03, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Dex', forgeName: 'Dexterity Bonus', htmlName: 'Dexterity', baseMultiplier: 0.03, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'End', forgeName: 'Endurance Bonus', htmlName: 'Endurance', baseMultiplier: 0.03, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Agi', forgeName: 'Agility Bonus', htmlName: 'Agility', baseMultiplier: 0.03, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Int', forgeName: 'Intelligence Bonus', htmlName: 'Intelligence', baseMultiplier: 0.03, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Wis', forgeName: 'Wisdom Bonus', htmlName: 'Wisdom', baseMultiplier: 0.03, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Evd', forgeName: 'Evade Chance', htmlName: 'Evade Chance', baseMultiplier: 0.025, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Res', forgeName: 'Resist Chance', htmlName: 'Resist Chance', baseMultiplier: 0.0804, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Pmit', forgeName: 'Physical Defense', htmlName: 'Physical Mitigation', baseMultiplier: 0.021, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Mmit', forgeName: 'Magical Defense', htmlName: 'Magical Mitigation', baseMultiplier: 0.0201, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'BLK', forgeName: 'Block Chance', htmlName: 'Block Chance', baseMultiplier: 0.0998, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Parry', forgeName: 'Parry Chance', htmlName: 'Parry Chance', baseMultiplier: 0.0894, levelScalingFactor: 2000 ***REMOVED***, { abbr: 'Mana C', forgeName: null, htmlName: 'Mana Conservation', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'Crus', forgeName: 'Crushing Mitigation', htmlName: 'Crushing', baseMultiplier: 0.0155, levelScalingFactor: null ***REMOVED***, { abbr: 'Slas', forgeName: 'Slashing Mitigation', htmlName: 'Slashing', baseMultiplier: 0.0153, levelScalingFactor: null ***REMOVED***, { abbr: 'Pier', forgeName: 'Piercing Mitigation', htmlName: 'Piercing', baseMultiplier: 0.015, levelScalingFactor: null ***REMOVED***, { abbr: 'Burden', forgeName: null, htmlName: 'Burden', baseMultiplier: 0, levelScalingFactor: null ***REMOVED***, { abbr: 'Interf', forgeName: null, htmlName: 'Interference', baseMultiplier: 0, levelScalingFactor: null ***REMOVED***, { abbr: 'Elem Prof', forgeName: 'Elemental Proficiency', htmlName: 'Elemental', baseMultiplier: 0.0306, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Divine Prof', forgeName: 'Divine Proficiency', htmlName: 'Divine', baseMultiplier: 0.0306, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Forb Prof', forgeName: 'Forbidden Proficiency', htmlName: 'Forbidden', baseMultiplier: 0.0306, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Depr Prof', forgeName: 'Deprecating Proficiency', htmlName: 'Deprecating', baseMultiplier: 0.0306, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Sup Prof', forgeName: 'Supportive Proficiency', htmlName: 'Supportive', baseMultiplier: 0.0306, levelScalingFactor: 35.714285714285715 ***REMOVED***, { abbr: 'Holy EDB', forgeName: 'Holy Spell Damage', htmlName: 'Holy EDB', baseMultiplier: 0.0804, levelScalingFactor: 200 ***REMOVED***, { abbr: 'Dark EDB', forgeName: 'Dark Spell Damage', htmlName: 'Dark EDB', baseMultiplier: 0.0804, levelScalingFactor: 200 ***REMOVED***, { abbr: 'Wind EDB', forgeName: 'Wind Spell Damage', htmlName: 'Wind EDB', baseMultiplier: 0.0804, levelScalingFactor: 200 ***REMOVED***, { abbr: 'Elec EDB', forgeName: 'Elec Spell Damage', htmlName: 'Elec EDB', baseMultiplier: 0.0804, levelScalingFactor: 200 ***REMOVED***, { abbr: 'Cold EDB', forgeName: 'Cold Spell Damage', htmlName: 'Cold EDB', baseMultiplier: 0.0804, levelScalingFactor: 200 ***REMOVED***, { abbr: 'Fire EDB', forgeName: 'Fire Spell Damage', htmlName: 'Fire EDB', baseMultiplier: 0.0804, levelScalingFactor: 200 ***REMOVED***, { abbr: 'Holy MIT', forgeName: 'Holy Mitigation', htmlName: 'Holy MIT', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'Dark MIT', forgeName: 'Dark Mitigation', htmlName: 'Dark MIT', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'Wind MIT', forgeName: 'Wind Mitigation', htmlName: 'Wind MIT', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'Elec MIT', forgeName: 'Elec Mitigation', htmlName: 'Elec MIT', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'Cold MIT', forgeName: 'Cold Mitigation', htmlName: 'Cold MIT', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'Fire MIT', forgeName: 'Fire Mitigation', htmlName: 'Fire MIT', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***, { abbr: 'CR', forgeName: null, htmlName: 'Counter-Resist', baseMultiplier: 0.1, levelScalingFactor: null ***REMOVED***];
 
-  ['Elem Prof', 'Elemental Proficiency', 'Elemental', 0.0306, 250 / 7],
-  ['Divine Prof', 'Divine Proficiency', 'Divine', 0.0306, 250 / 7],
-  ['Forb Prof', 'Forbidden Proficiency', 'Forbidden', 0.0306, 250 / 7],
-  ['Depr Prof', 'Deprecating Proficiency', 'Deprecating', 0.0306, 250 / 7],
-  ['Sup Prof', 'Supportive Proficiency', 'Supportive', 0.0306, 250 / 7],
-
-  ['Holy EDB', 'Holy Spell Damage', 'Holy EDB', 0.0804, 200],
-  ['Dark EDB', 'Dark Spell Damage', 'Dark EDB', 0.0804, 200],
-  ['Wind EDB', 'Wind Spell Damage', 'Wind EDB', 0.0804, 200],
-  ['Elec EDB', 'Elec Spell Damage', 'Elec EDB', 0.0804, 200],
-  ['Cold EDB', 'Cold Spell Damage', 'Cold EDB', 0.0804, 200],
-  ['Fire EDB', 'Fire Spell Damage', 'Fire EDB', 0.0804, 200],
-
-  ['Holy MIT', 'Holy Mitigation', 'Holy MIT', 0.1, Infinity],
-  ['Dark MIT', 'Dark Mitigation', 'Dark MIT', 0.1, Infinity],
-  ['Wind MIT', 'Wind Mitigation', 'Wind MIT', 0.1, Infinity],
-  ['Elec MIT', 'Elec Mitigation', 'Elec MIT', 0.1, Infinity],
-  ['Cold MIT', 'Cold Mitigation', 'Cold MIT', 0.1, Infinity],
-  ['Fire MIT', 'Fire Mitigation', 'Fire MIT', 0.1, Infinity],
-
-  ['CR', null, 'Counter-Resist', 0.1, Infinity]
+export const PEERLESS_PXP = [
+  ['axe', 375], ['club', 375], ['rapier', 377], ['shortsword', 377], ['wakizashi', 378], ['estoc', 377], ['katana', 375], ['longsword', 375], ['mace', 375], ['katalox staff', 368], ['oak staff', 371], ['redwood staff', 371], ['willow staff', 371], ['buckler', 374], ['force shield', 374], ['kite shield', 374], ['phase', 377], ['cotton', 377], ['arcanist', 421], ['shade', 394], ['leather', 393], ['power', 382], [' plate', 377]
 ] as const;
 
 export const HTML_MAGIC_TYPES = ['Holy', 'Dark', 'Wind', 'Elec', 'Cold', 'Fire'];
 export const HTML_PROF_TYPES = ['Divine', 'Forbidden', 'Elemental'];
 export const STAFF_PREFIXES = { Holy: 'Hallowed', Dark: 'Demonic', Wind: 'Tempestuous', Elec: 'Shocking', Cold: 'Arctic', Fire: 'Fiery' ***REMOVED***;
+export const EQUIPMENT_TYPES_WITH_SLOTS = ['Cotton', 'Phase', 'Leather', 'Shade', 'Plate', 'Power'];

@@ -15,7 +15,7 @@ export async function getPage(url: string, options?: OptionsOfTextResponseBody):
 
   log.info(`Fetching Page: ${url***REMOVED***`);
 
-  const { body ***REMOVED*** = await got(url, {
+  const { body, statusCode ***REMOVED*** = await got(url, {
     retry: { limit: 2 ***REMOVED***,
     headers: {
       'User-Agent': 'Mozilla/5.0 New Auction'
@@ -23,7 +23,9 @@ export async function getPage(url: string, options?: OptionsOfTextResponseBody):
     ...options
   ***REMOVED***);
 
-  cache.set(url, body);
+  if (statusCode >= 200 && statusCode < 300 || statusCode === 304) {
+    cache.set(url, body);
+  ***REMOVED***
 
   return body;
 ***REMOVED***

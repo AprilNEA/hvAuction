@@ -1,6 +1,10 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import hexoLogger from 'hexo-log';
 import { bidItemsRequestHandler, repliesListRequestHandler ***REMOVED*** from './auction';
+import { fetchEquipmentInfo ***REMOVED*** from './equip';
+
+dotenv.config();
 
 (async () => {
   const log = hexoLogger();
@@ -23,7 +27,7 @@ import { bidItemsRequestHandler, repliesListRequestHandler ***REMOVED*** from '.
   app.get('/bids/:id/:item', bidItemsRequestHandler);
   // Fetch hentaiverse equipment info
   // @example /hv/equip/https://hentaiverse.org/equip/268468677/df59bf55b2
-  app.get('/hv/equip/:link');
+  app.get('/hv/equip/*', fetchEquipmentInfo);
 
   app.listen(port, () => {
     log.info(`Auto Pony listening at http://localhost:${port***REMOVED***`);
