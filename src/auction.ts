@@ -33,6 +33,7 @@ function parsePages(html: string, threadId: number): {
         results.push({
           postId,
           postLink,
+          $id,
           username,
           date,
           timestamp,
@@ -116,21 +117,19 @@ export async function bidItemsRequestHandler(req: express.Request, res: express.
 
       const posts = await getThreadReply(threadId);
       posts.forEach((post) => {
-        if (post.postId !== '#1' && post.postId !== '#2') {
-          Object.keys(post.bid).forEach(item => {
-            const bidPrice = post.bid[item];
+        Object.keys(post.bid).forEach(item => {
+          const bidPrice = post.bid[item];
 
-            (bidMap[item] = bidMap[item] || []).push({
-              postId: post.postId,
-              postLink: post.postLink,
-              username: post.username,
-              isEdited: post.isEdited,
-              date: post.date,
-              timestamp: post.timestamp,
-              price: bidPrice === 'start' || bidPrice === 'cancel' ? bidPrice : parsePrice(bidPrice || '0')
-            ***REMOVED***);
+          (bidMap[item] = bidMap[item] || []).push({
+            postId: post.postId,
+            postLink: post.postLink,
+            username: post.username,
+            isEdited: post.isEdited,
+            date: post.date,
+            timestamp: post.timestamp,
+            price: bidPrice === 'start' || bidPrice === 'cancel' ? bidPrice : parsePrice(bidPrice || '0')
           ***REMOVED***);
-        ***REMOVED***
+        ***REMOVED***);
       ***REMOVED***);
 
       if (req.params.item && typeof req.params.item === 'string') {

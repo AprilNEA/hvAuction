@@ -3,6 +3,7 @@ import { ParseBidResults ***REMOVED*** from '../lib/bid/tokenizer';
 export namespace Forum {
   export interface Reply {
     postId: string
+    $id: string
     postLink: string
     username: string
     content: string
