@@ -3,6 +3,7 @@ import FormData from 'form-data';
 
 import express from 'express';
 import { getPage ***REMOVED*** from './util/network';
+import { ipsPostEncoder ***REMOVED*** from './util/encode';
 
 export async function editPost(req: express.Request, res: express.Response): Promise<void> {
   if (
@@ -19,8 +20,6 @@ export async function editPost(req: express.Request, res: express.Response): Pro
         ***REMOVED***
       ***REMOVED***);
 
-      console.log(req.params.content);
-
       if (pageHtml) {
         const md5CheckMatches = pageHtml.match(/ipb_md5_check\s+=\s"([\w\W]+?)";/);
 
@@ -35,7 +34,7 @@ export async function editPost(req: express.Request, res: express.Response): Pro
           formData.append('act', 'xmlout'); // Fixed Value
           formData.append('do', 'post-edit-save'); // Fixed Value
           formData.append('std_used', '1'); // Fixed Value
-          formData.append('Post', decodeURIComponent(encodeURIComponent(req.params.content))); // Fixed Value
+          formData.append('Post', ipsPostEncoder(decodeURIComponent(req.params.content))); // Fixed Value
 
           const { statusCode ***REMOVED*** = await got.post(`https://forums.e-hentai.org/index.php?s=&act=xmlout&do=post-edit-save&p=${req.params.postId***REMOVED***&t=${req.params.id***REMOVED***&f=${req.params.forum***REMOVED***`, {
             headers: {

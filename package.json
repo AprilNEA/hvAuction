@@ -30,7 +30,7 @@
   "scripts": {
     "updateDB": "ts-node tools/fetchDB.ts",
     "build": "tsc",
-    "test": "ts-mocha -p tsconfig.json src/*.spec.ts"
+    "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts"
   ***REMOVED***,
   "repository": {
     "type": "git",

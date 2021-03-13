@@ -25,11 +25,13 @@ export function lexer(str: string): LexToken[] {
     const char = str[i].toLowerCase();
     const charCode = char.charCodeAt(0);
 
+    // Skip invalid tokens
     if (char === ' ' || char === '\n' || char === '\t' || char === '\f' || char === '\r' || INVALID_TOKENS.has(char)) {
       i++;
       continue;
     ***REMOVED***
 
+    // Skip words
     if (
       i + 2 < len && char === 'b' && str[i + 1] === 'i' && str[i + 2] === 'd' // bid
       || i + 2 < len && char === 'a' && str[i + 1] === 'n' && str[i + 2] === 'd' // and
@@ -38,6 +40,7 @@ export function lexer(str: string): LexToken[] {
       continue;
     ***REMOVED***
 
+    // PRICE should always come after NAME
     if (STATUS === 'NAME') {
       if (
         i + 4 < len && char === 's' && str[i + 1] === 't' && str[i + 2] === 'a' && str[i + 3] === 'r' && str[i + 4] === 't' // start
@@ -83,6 +86,7 @@ export function lexer(str: string): LexToken[] {
       ***REMOVED***
     ***REMOVED***
 
+    // NAME
     if (
       i + 2 < len
       && (
