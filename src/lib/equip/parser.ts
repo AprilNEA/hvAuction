@@ -226,7 +226,7 @@ export function parseEquipmentFromDocument(html: string) {
   let info = String(level);
 
   if (name.includes('Buckler') || name.includes('Shield ')) {
-    info += pabs?.map(pab => pab.substring(0, 3)).join(' ') || '';
+    info += ` ${pabs?.map(pab => pab.substring(0, 3)).join(' ')***REMOVED***` || '';
   ***REMOVED***
   if (tier && tier > 0) {
     info += `, IW ${tier***REMOVED***`;
@@ -288,8 +288,9 @@ export function parseEquipmentFromDocument(html: string) {
     ***REMOVED***);
   ***REMOVED***);
 
-  return {
+  const data = {
     name,
+    category: parseEquipType(name),
     info,
     percentile,
     level,
@@ -308,6 +309,190 @@ export function parseEquipmentFromDocument(html: string) {
     swiftStrike,
     archmage,
     penetrator,
-    maxForging
+    maxForging,
+    bbcode: ''
   ***REMOVED***;
+
+  data.bbcode = generateBBCode(data);
+
+  return data;
+***REMOVED***
+
+interface BBCodeSnippetType {
+  code?: string,
+  color?: string,
+  bold?: boolean,
+  the?: boolean
+***REMOVED***
+
+function parseEquipType(name: string): '1H' | '2H' | 'Staff' | 'Shield' | 'Cloth' | 'Light' | 'Heavy' | undefined {
+  if (
+    name.includes('Axe')
+    || name.includes('Club')
+    || name.includes('Rapier')
+    || name.includes('Shortsword')
+    || name.includes('Wakizashi')
+  ) return '1H';
+  if (
+    name.includes('Estoc')
+    || name.includes('Longsword')
+    || name.includes('Mace')
+    || name.includes('Katana')
+  ) {
+    return '2H';
+  ***REMOVED***
+  if (name.includes('Staff')) return 'Staff';
+  if (name.includes('Shield') || name.includes('Buckler')) return 'Shield';
+  if (name.includes('Cotton') || name.includes('Phase')) return 'Cloth';
+  if (name.includes('Leather') || name.includes('Shade')) return 'Light';
+  if (name.includes('Plate') || name.includes('Power')) return 'Heavy';
+***REMOVED***
+
+function generateBBCode(equipInfo: ReturnType<typeof parseEquipmentFromDocument>): string {
+  const peerlessRainbow = (text: string) => {
+    const c = ['#f00', '#f90', '#fc0', '#0c0', '#09f', '#00c', '#c0f'], l = c.length;
+    return text.split('').map((t, i) => `[color=${c[i % l]***REMOVED***]${t***REMOVED***[/color]`).join('');
+  ***REMOVED***;
+
+  const color1 = '#f00';
+  const color2 = '#f90';
+
+  const all: BBCodeSnippetType = {***REMOVED***;
+  const quality: BBCodeSnippetType = { code: equipInfo?.quality ***REMOVED***;
+  const prefix: BBCodeSnippetType = { code: equipInfo?.prefix ***REMOVED***;
+  const type: BBCodeSnippetType = { code: equipInfo?.type ***REMOVED***;
+  const slot: BBCodeSnippetType = { code: equipInfo?.slot ***REMOVED***;
+  const suffix: BBCodeSnippetType = { code: equipInfo?.suffix ***REMOVED***;
+
+  if (equipInfo?.category === '1H') {
+    if (equipInfo?.name.includes('Rapier') && equipInfo.suffix === 'suffix') {
+      if (equipInfo.prefix === 'Ethereal' || equipInfo.prefix === 'Hallowed' || equipInfo.prefix === 'Demonic') {
+        prefix.color = color1;
+        type.bold = true;
+        suffix.bold = true;
+      ***REMOVED***
+    ***REMOVED*** else if ((equipInfo?.name.includes('Rapier') || equipInfo?.type === 'Wakizashi') && (equipInfo.suffix.includes('Nimble') || equipInfo.suffix.includes('Balance'))) {
+      if (equipInfo.prefix === 'Ethereal') {
+        prefix.color = color1;
+      ***REMOVED***
+      type.bold = true;
+    ***REMOVED*** else if ((equipInfo?.type === 'Club' || equipInfo?.type === 'Shortsword' || equipInfo?.type === 'Axe') && equipInfo.suffix === 'Slaughter') {
+      if (equipInfo.prefix === 'Ethereal') {
+        prefix.color = color1;
+      ***REMOVED***
+      type.bold = true;
+      suffix.color = color1;
+    ***REMOVED***
+  ***REMOVED*** else if (equipInfo?.category === '2H') {
+    if (equipInfo.suffix === 'Slaughter') {
+      prefix.color = color1;
+      type.bold = true;
+      suffix.color = color1;
+    ***REMOVED***
+  ***REMOVED*** else if (equipInfo?.category === 'Staff') {
+    if (equipInfo.type === 'Oak') {
+      if (equipInfo.prefix === 'Hallowed' && equipInfo.suffix === 'Heimdall') {
+        prefix.bold = true;
+        type.bold = true;
+        suffix.bold = true;
+      ***REMOVED***
+    ***REMOVED*** else if (equipInfo.type === 'Willow') {
+      if (['Shocking', 'Tempestuous', 'Demonic'].includes(equipInfo.prefix) && equipInfo.suffix === 'Destruction') {
+        prefix.bold = true;
+        type.bold = true;
+        suffix.bold = true;
+      ***REMOVED***
+    ***REMOVED*** else if (equipInfo.type === 'Katalox') {
+      const $prefix = ({ 'Hallowed': 5, 'Demonic': 6 ***REMOVED***)[equipInfo.prefix];
+      const $suffix = ({ 'Destruction': -1, 'Heimdall': 5, 'Fenrir': 6, 'Heaven-sent': 8, 'Demon-fiend': 9 ***REMOVED***)[equipInfo.suffix];
+      if ($prefix && $suffix) {
+        if ($suffix === -1) {
+          prefix.bold = true;
+          type.bold = true;
+          suffix.bold = true;
+        ***REMOVED*** else if ($suffix === $prefix) {
+          prefix.bold = true;
+          type.bold = true;
+        ***REMOVED*** else if ($suffix === $prefix + 3) {
+          prefix.bold = true;
+          type.bold = true;
+        ***REMOVED***
+      ***REMOVED***
+    ***REMOVED*** else if (equipInfo.type === 'Redwood') {
+      const $prefix = ({ 'Fiery': 1, 'Arctic': 2, 'Shocking': 3, 'Tempestuous': 4 ***REMOVED***)[equipInfo.prefix];
+      const $suffix = ({ 'Destruction': -1, 'Surtr': 1, 'Niflheim': 2, 'Mjolnir': 3, 'Freyr': 4, 'Elementalist': 7 ***REMOVED***)[equipInfo.suffix];
+      if ($prefix && $suffix) {
+        if ($suffix === -1) {
+          prefix.bold = true;
+          type.bold = true;
+          suffix.bold = true;
+        ***REMOVED*** else if ($suffix === $prefix) {
+          prefix.bold = true;
+          type.bold = true;
+        ***REMOVED*** else if ($suffix === 7) {
+          prefix.bold = true;
+          type.bold = true;
+        ***REMOVED***
+      ***REMOVED***
+    ***REMOVED***
+  ***REMOVED*** else if (equipInfo?.category === 'Shield') {
+    if (equipInfo.type === 'Force') {
+      type.bold = true;
+      suffix.bold = ['Protection', 'Dampening', 'Deflection'].includes(equipInfo.suffix);
+    ***REMOVED*** else if (equipInfo.type === 'Buckler' && ['Barrier', 'Battlecaster'].includes(equipInfo.suffix)) {
+      if (equipInfo.prefix === 'Reinforced') prefix.color = color1;
+      type.bold = true;
+      suffix.bold = true;
+    ***REMOVED***
+  ***REMOVED*** else if (equipInfo?.category === 'Cloth') {
+    if (equipInfo.type === 'Phase') {
+      prefix.color = ({ 'Radiant': color1, 'Charged': color1, 'Mystic': color2, 'Frugal': color2 ***REMOVED***)[equipInfo.prefix];
+      type.bold = true;
+    ***REMOVED*** else if (equipInfo.type === 'Cotton' && ['Elementalist', 'Heaven-sent', 'Demon-fiend'].includes(equipInfo.suffix)) {
+      prefix.color = ({ 'Charged': color1, 'Frugal': color2 ***REMOVED***)[equipInfo.prefix];
+      suffix.bold = true;
+    ***REMOVED***
+  ***REMOVED*** else if (equipInfo?.category === 'Light') {
+    if (equipInfo.type === 'Shade') {
+      prefix.color = ({ 'Savage': color1, 'Agile': color2 ***REMOVED***)[equipInfo.prefix];
+      type.bold = true;
+      suffix.bold = equipInfo.suffix === 'Shadowdancer';
+    ***REMOVED*** else if (equipInfo.type === 'Leather') {
+      prefix.color = ({ 'Reinforced': color1 ***REMOVED***)[equipInfo.prefix];
+    ***REMOVED***
+  ***REMOVED*** else if (equipInfo?.category === 'Heavy') {
+    if (equipInfo.type === 'Power') {
+      prefix.color = ({ 'Savage': color1 ***REMOVED***)[equipInfo.prefix];
+      type.color = color1;
+      if (equipInfo.suffix === 'Slaughter') suffix.color = color1;
+    ***REMOVED*** else if (equipInfo.type === 'Plate') {
+      prefix.color = ({ 'Shielding': color1 ***REMOVED***)[equipInfo.prefix];
+      suffix.bold = equipInfo.suffix === 'Protection';
+    ***REMOVED***
+  ***REMOVED*** else {
+    all.code = equipInfo?.name;
+  ***REMOVED***
+
+  if (equipInfo?.quality === 'Peerless') {
+    quality.code = peerlessRainbow(quality.code || 'Peerless');
+    quality.bold = true;
+  ***REMOVED***
+
+  if (/Nimble|Heaven-sent|Demon-fiend|Elementalist|Battlecaster|Barrier|Shadowdancer/.test(equipInfo?.suffix || '')) suffix.the = true;
+  if (/Oak|Redwood|Willow|Katalox|Ebony/.test(type.code || '')) type.code += ' Staff';
+  [quality, prefix, slot, suffix, type].forEach(i => {
+    if (i.color) {
+      i.code = `[b][color=${i.color***REMOVED***]${i.code***REMOVED***[/color][/b]`;
+    ***REMOVED*** else if (i.bold) {
+      i.code = `[b]${i.code***REMOVED***[/b]`;
+    ***REMOVED***
+    if (i.the) i.code = `the ${i.code***REMOVED***`;
+  ***REMOVED***);
+
+  all.code = all.code || `${quality.code + (prefix.code ? ` ${prefix.code***REMOVED***` : '')***REMOVED*** ${type.code***REMOVED***${slot.code ? ` ${slot.code***REMOVED***` : ''***REMOVED***${suffix.code ? ` of ${suffix.code***REMOVED***` : ''***REMOVED***`;
+
+  if (all.color) { all.code = `[color=${all.color***REMOVED***]${all.code***REMOVED***[/color]`; ***REMOVED***
+  if (all.bold) { all.code = `[b]${all.code***REMOVED***[/b]`; ***REMOVED***
+
+  return all.code;
 ***REMOVED***
