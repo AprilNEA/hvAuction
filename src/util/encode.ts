@@ -4,6 +4,6 @@ export function ipsPostEncoder(input: string): string {
       return `%u${c.charCodeAt(0).toString(16).toUpperCase()***REMOVED***`;
     ***REMOVED***
 
-    return encodeURIComponent(c);
+    return c;
   ***REMOVED***).join('');
 ***REMOVED***

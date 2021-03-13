@@ -4,6 +4,7 @@ import hexoLogger from 'hexo-log';
 import { bidItemsRequestHandler, repliesListRequestHandler ***REMOVED*** from './auction';
 import { fetchEquipmentInfo ***REMOVED*** from './equip';
 import { editPost ***REMOVED*** from './thread';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ dotenv.config();
   app.use(express.json({
     limit: '2mb'
   ***REMOVED***));
+  app.use(cors());
 
   // Fetch original replies data
   // @example: /forum/replies/246282
@@ -27,6 +29,7 @@ dotenv.config();
   // postId: $id from API "/forum/replies/:id"
   // content: uri encoded content
   app.get('/forum/edit/:forum/:id/:postId/:content', editPost);
+  app.post('/forum/edit/:forum/:id/:postId/', editPost);
 
   // Fetch original bid data
   // @example: /bids/246282
