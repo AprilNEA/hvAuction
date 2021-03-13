@@ -152,7 +152,7 @@ export function parseEquipmentFromDocument(html: string) {
     ***REMOVED***
 
     if (HTML_MAGIC_TYPES.includes(htmlName)) {
-      if ($(el).parent().children().eq(0).text()) {
+      if ($(el).parent().children().eq(0).text() === 'Damage Mitigations') {
         htmlName += ' MIT';
       ***REMOVED*** else {
         htmlName += ' EDB';
