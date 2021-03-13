@@ -14,7 +14,7 @@ dotenv.config();
   const port = 3001;
 
   app.use(express.json({
-    limit: '1mb'
+    limit: '2mb'
   ***REMOVED***));
 
   // Fetch original replies data

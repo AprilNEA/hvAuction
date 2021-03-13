@@ -11,7 +11,10 @@ export async function editPost(req: express.Request, res: express.Response): Pro
     && req.params.forum && typeof req.params.forum === 'string'
     && req.params.id && typeof req.params.id === 'string'
     && req.params.postId && typeof req.params.postId === 'string'
-    && req.params.content && typeof req.params.content === 'string'
+    && (
+      req.params.content && typeof req.params.content === 'string'
+      || req.body && req.body.content && typeof req.body.content === 'string'
+    )
   ) {
     if (process.env.ipb_member_id && process.env.ipb_pass_hash) {
       const pageHtml = await getPage(`https://forums.e-hentai.org/index.php?showtopic=${req.params.id***REMOVED***`, {
@@ -26,6 +29,8 @@ export async function editPost(req: express.Request, res: express.Response): Pro
         if (md5CheckMatches) {
           const md5check = md5CheckMatches[1];
 
+          const content = (req.params.content && typeof req.params.content === 'string') ? decodeURIComponent(req.params.content) : req.body.content;
+
           const formData = new FormData();
           formData.append('md5check', md5check);
           formData.append('t', req.params.id);
@@ -34,7 +39,7 @@ export async function editPost(req: express.Request, res: express.Response): Pro
           formData.append('act', 'xmlout'); // Fixed Value
           formData.append('do', 'post-edit-save'); // Fixed Value
           formData.append('std_used', '1'); // Fixed Value
-          formData.append('Post', ipsPostEncoder(decodeURIComponent(req.params.content))); // Fixed Value
+          formData.append('Post', ipsPostEncoder(content)); // Fixed Value
 
           const { statusCode ***REMOVED*** = await got.post(`https://forums.e-hentai.org/index.php?s=&act=xmlout&do=post-edit-save&p=${req.params.postId***REMOVED***&t=${req.params.id***REMOVED***&f=${req.params.forum***REMOVED***`, {
             headers: {
