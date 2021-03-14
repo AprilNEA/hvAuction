@@ -12,8 +12,8 @@ export async function editPost(req: express.Request, res: express.Response): Pro
     && req.params.id && typeof req.params.id === 'string'
     && req.params.postId && typeof req.params.postId === 'string'
     && (
-      req.params.content && typeof req.params.content === 'string'
-      || req.body && req.body.content && typeof req.body.content === 'string'
+      req.params.content && typeof req.params.content !== 'undefined'
+      || req.body && req.body.content && typeof req.body.content !== 'undefined'
     )
   ) {
     if (process.env.ipb_member_id && process.env.ipb_pass_hash) {
@@ -29,7 +29,7 @@ export async function editPost(req: express.Request, res: express.Response): Pro
         if (md5CheckMatches) {
           const md5check = md5CheckMatches[1];
 
-          const content = (req.params.content && typeof req.params.content === 'string') ? decodeURIComponent(req.params.content) : req.body.content;
+          const content = (req.body.content && typeof req.body.content !== 'undefined') ? req.body.content : decodeURIComponent(req.params.content);
 
           const formData = new FormData();
           formData.append('md5check', md5check);
