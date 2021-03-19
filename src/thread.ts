@@ -41,7 +41,7 @@ export async function editPost(req: express.Request, res: express.Response): Pro
           formData.append('std_used', '1'); // Fixed Value
           formData.append('Post', ipsPostEncoder(content)); // Fixed Value
 
-          const { statusCode ***REMOVED*** = await got.post(`https://forums.e-hentai.org/index.php?s=&act=xmlout&do=post-edit-save&p=${req.params.postId***REMOVED***&t=${req.params.id***REMOVED***&f=${req.params.forum***REMOVED***`, {
+          const { statusCode, body ***REMOVED*** = await got.post(`https://forums.e-hentai.org/index.php?s=&act=xmlout&do=post-edit-save&p=${req.params.postId***REMOVED***&t=${req.params.id***REMOVED***&f=${req.params.forum***REMOVED***`, {
             headers: {
               cookie: `ipb_member_id=${process.env.ipb_member_id***REMOVED***; ipb_pass_hash=${process.env.ipb_pass_hash***REMOVED***`
             ***REMOVED***,
@@ -52,7 +52,7 @@ export async function editPost(req: express.Request, res: express.Response): Pro
             res.status(200).json({
               code: 0,
               msg: 'Post edit submitted successfully!',
-              data: null
+              data: body
             ***REMOVED***).end();
 
             return;
