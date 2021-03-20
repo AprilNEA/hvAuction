@@ -1,0 +1,95 @@
+{
+    'code': 0,
+    'msg': '',
+    'data': {
+        'name': 'Legendary Shocking Willow Staff of Destruction',
+        'info': 'Soulbound, IW 10, forged 100, MDB 83%, Int 96%, Wis 54%, Elem Prof 42%, Depr Prof 88%, CR 36%, Burden 67%',
+        'percentile': {
+            'MDB': 83,
+            'Int': 96,
+            'Wis': 54,
+            'Elem Prof': 42,
+            'Depr Prof': 88,
+            'CR': 36,
+            'Burden': 67
+        ***REMOVED***,
+        'level': 'Soulbound',
+        'tier': 10,
+        'totalPxpThisLevel': 0,
+        'quality': 'Legendary',
+        'prefix': 'Shocking',
+        'slot': '',
+        'type': 'Willow',
+        'suffix': 'Destruction',
+        'pabs': ['Intelligence', 'Wisdom'],
+        'pxp0': 352,
+        'isObsolete': False,
+        'forging': {
+            'Attack Damage': {
+                'forgeLevel': 5,
+                'baseMultiplier': 0.0854,
+                'scalingFactor': 16.666666666666668
+            ***REMOVED***,
+            'Magic Damage': {
+                'forgeLevel': 100,
+                'baseMultiplier': 0.082969,
+                'scalingFactor': 22.727272727272727
+            ***REMOVED***,
+            'Magic Accuracy': {
+                'forgeLevel': 25,
+                'baseMultiplier': 0.0491,
+                'scalingFactor': 5000
+            ***REMOVED***,
+            'Magic Crit Chance': {
+                'forgeLevel': 50,
+                'baseMultiplier': 0.0114,
+                'scalingFactor': 2000
+            ***REMOVED***,
+            'Elemental': {
+                'forgeLevel': 50,
+                'baseMultiplier': 0.0306,
+                'scalingFactor': 35.714285714285715
+            ***REMOVED***,
+            'Deprecating': {
+                'forgeLevel': 50,
+                'baseMultiplier': 0.0306,
+                'scalingFactor': 35.714285714285715
+            ***REMOVED***,
+            'Forbidden': {
+                'forgeLevel': 5,
+                'baseMultiplier': 0.0306,
+                'scalingFactor': 35.714285714285715
+            ***REMOVED***,
+            'Elec EDB': {
+                'forgeLevel': 50,
+                'baseMultiplier': 0.0804,
+                'scalingFactor': 200
+            ***REMOVED***,
+            'Wind EDB': {
+                'forgeLevel': 5,
+                'baseMultiplier': 0.0804,
+                'scalingFactor': 200
+            ***REMOVED***,
+            'Dark EDB': {
+                'forgeLevel': 5,
+                'baseMultiplier': 0.0804,
+                'scalingFactor': 200
+            ***REMOVED***,
+            'Intelligence': {
+                'forgeLevel': 50,
+                'baseMultiplier': 0.03,
+                'scalingFactor': 35.714285714285715
+            ***REMOVED***,
+            'Wisdom': {
+                'forgeLevel': 50,
+                'baseMultiplier': 0.03,
+                'scalingFactor': 35.714285714285715
+            ***REMOVED***
+        ***REMOVED***,
+        'butcher': 0,
+        'swiftStrike': 0,
+        'archmage': 0,
+        'penetrator': 5,
+        'maxForging': 100
+    ***REMOVED***
+***REMOVED***
