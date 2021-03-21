@@ -13,38 +13,29 @@ const cache = new Cache({
 export async function fetchEquipmentInfo(req: express.Request, res: express.Response): Promise<void> {
   if (req.query && req.query.url && typeof req.query.url === 'string') {
     try {
-      if (process.env.ipb_member_id && process.env.ipb_pass_hash) {
-        if (cache.has(req.query.url)) {
-          res.status(200).json({
-            code: 0,
-            msg: '',
-            data: cache.get(req.query.url)
-          ***REMOVED***).end();
+      if (cache.has(req.query.url)) {
+        res.status(200).json({
+          code: 0,
+          msg: '',
+          data: cache.get(req.query.url)
+        ***REMOVED***).end();
 
-          return;
+        return;
+      ***REMOVED***
+      const html = await getPage(req.query.url, {
+        headers: {
+          cookie: `ipb_member_id=${process.env.ipb_member_id***REMOVED***; ipb_pass_hash=${process.env.ipb_pass_hash***REMOVED***`
         ***REMOVED***
-        const html = await getPage(req.query.url, {
-          headers: {
-            cookie: `ipb_member_id=${process.env.ipb_member_id***REMOVED***; ipb_pass_hash=${process.env.ipb_pass_hash***REMOVED***`
-          ***REMOVED***
-        ***REMOVED***);
-        if (html) {
-          const data = parseEquipmentFromDocument(html);
-          cache.set(req.query.url, data);
+      ***REMOVED***);
 
-          res.status(200).json({
-            code: 0,
-            msg: '',
-            data
-          ***REMOVED***).end();
+      if (html) {
+        const data = parseEquipmentFromDocument(html);
+        cache.set(req.query.url, data);
 
-          return;
-        ***REMOVED***
-
-        res.status(400).json({
-          code: 1,
-          msg: 'Error connecting and fetching provided "url"',
-          data: null
+        res.status(200).json({
+          code: 0,
+          msg: '',
+          data
         ***REMOVED***).end();
 
         return;
@@ -52,9 +43,11 @@ export async function fetchEquipmentInfo(req: express.Request, res: express.Resp
 
       res.status(400).json({
         code: 1,
-        msg: 'You have to configure e-h account crendential first!',
+        msg: 'Error connecting and fetching provided "url"',
         data: null
       ***REMOVED***).end();
+
+      return;
     ***REMOVED*** catch (e) {
       res.status(401).send({
         code: 1,
