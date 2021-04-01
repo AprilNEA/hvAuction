@@ -31,9 +31,23 @@ class HVAPI:
 
     # 自动编辑帖子
     # forum区域 id主贴编号 Id回复编号
-    def auto_edit(self, forum, id, postId, content):
+    def quick_edit(self, forum, id, postId, content):
         url = f'{self.sevear***REMOVED***/forum/edit/{forum***REMOVED***/{id***REMOVED***/{postId***REMOVED***/'
+        #content = content.encode('utf-8')
         instances = {"content": content***REMOVED***
+        response = requests.post(url, json=instances)
+        return response.text
+
+    # 自动编辑帖子
+    # forum区域 id主贴编号 Id回复编号
+    def full_edit(self, forum, id, postId, title, content, description=""):
+        url = f'{self.sevear***REMOVED***/forum/full_edit/{forum***REMOVED***/{id***REMOVED***/{postId***REMOVED***/'
+        # content = content.encode('utf-8')
+        instances = {
+            "title": title,
+            "content": content,
+            "description": description
+        ***REMOVED***
         response = requests.post(url, json=instances)
         return response.text
 

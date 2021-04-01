@@ -7,7 +7,7 @@ import json
 from databasesq3 import DATABASE
 from hvapi import HVAPI
 api = HVAPI(r'http://hk.sukeycz.com:3001')
-print(api.equip_allinfo('https://hentaiverse.org/equip/268325913/a916142cda'))
+#print(api.equip_allinfo('https://hentaiverse.org/equip/268325913/a916142cda'))
 bbcode = '''
 [size=4][b]Materials/Special[/b][/size]
 

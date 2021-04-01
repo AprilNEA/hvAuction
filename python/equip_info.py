@@ -5,7 +5,7 @@ import sqlite3
 # http://localhost:3001/hv/equip/?url=https://hentaiverse.org/equip/268325913/a916142cda
 
 SERVER = 'http://hk.sukeycz.com:3001'
-db_name = r'D:\Github\hv-Auction\database\auction.db'
+db_name = r'D:\Github\hvAuction\python\database\auction.db'
 
 
 def equip_allinfo(link):
