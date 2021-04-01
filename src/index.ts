@@ -3,8 +3,10 @@ import express from 'express';
 import hexoLogger from 'hexo-log';
 import { bidItemsRequestHandler, repliesListRequestHandler ***REMOVED*** from './auction';
 import { fetchEquipmentInfo ***REMOVED*** from './equip';
-import { editPost ***REMOVED*** from './thread';
+import { quickEditPost ***REMOVED*** from './thread';
 import cors from 'cors';
+import { requestCredential ***REMOVED*** from './lib/middleware/requestEhCredential';
+import { fullEditPost ***REMOVED*** from './lib/editPost/full_edit';
 
 dotenv.config();
 
@@ -28,8 +30,9 @@ dotenv.config();
   // id: thread id
   // postId: $id from API "/forum/replies/:id"
   // content: uri encoded content
-  app.get('/forum/edit/:forum/:id/:postId/:content', editPost);
-  app.post('/forum/edit/:forum/:id/:postId/', editPost);
+  app.get('/forum/edit/:forum/:id/:postId/:content', requestCredential, quickEditPost);
+  app.post('/forum/edit/:forum/:id/:postId/', requestCredential, quickEditPost);
+  app.post('/forum/full_edit/:forum/:id/:postId/', requestCredential, fullEditPost);
 
   // Fetch original bid data
   // @example: /bids/246282
@@ -41,7 +44,7 @@ dotenv.config();
 
   // Fetch hentaiverse equipment info
   // @example /hv/equip/?url=https://hentaiverse.org/equip/268468677/df59bf55b2
-  app.get('/hv/equip/*', fetchEquipmentInfo);
+  app.get('/hv/equip/*', requestCredential, fetchEquipmentInfo);
 
   app.listen(port, () => {
     log.info(`API Server listening at http://localhost:${port***REMOVED***`);
