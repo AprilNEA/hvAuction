@@ -28,7 +28,7 @@ class HVInterface(object):
         resp = self.session.get(url)
         resp = bs(resp.text, 'html.parser')
         assert resp.find(id='mailform')
-        mm_token = resp.find('input', {'name': 'mmtoken'***REMOVED***).get('value')
+        mm_token = resp.find('input', {'name': 'mmtoken'}).get('value')
         sender = resp.find_all('input')[4].get('value')
         attach_list = resp.find(id='mmail_attachlist')
         assert attach_list
@@ -42,7 +42,7 @@ class HVInterface(object):
         post_data = {
             'action': 'attach_remove',
             'action_value': 0,
-            'mmtoken': mm_token***REMOVED***
+            'mmtoken': mm_token}
         resp = self.session.post(url, data=post_data)
         resp = bs(resp.text, 'html.parser')
         assert resp.find(id='mailform')
@@ -53,7 +53,7 @@ class HVInterface(object):
         post_data = {
             'action': 'return_message',
             'action_value': 0,
-            'mmtoken': mm_token***REMOVED***
+            'mmtoken': mm_token}
         resp = self.session.post(url, data=post_data)
         resp = bs(resp.text, 'html.parser')
         assert resp.find(id='mailform')
@@ -67,13 +67,13 @@ class HVInterface(object):
         resp = bs(resp.text, 'html.parser')
         assert resp.find('img', onclick='mooglemail.return_mail()')
 
-        mm_token = resp.find('input', {'name': 'mmtoken'***REMOVED***).get('value')
+        mm_token = resp.find('input', {'name': 'mmtoken'}).get('value')
 
         # Recall the mail
         resp = self.session.post(url, data={
             'action': 'return_message',
             'action_value': 0,
-            'mmtoken': mm_token***REMOVED***)
+            'mmtoken': mm_token})
         resp = bs(resp.text, 'html.parser')
         assert resp.find('img', onclick='mooglemail.remove_attachment(0)')
 
@@ -85,7 +85,7 @@ class HVInterface(object):
             'select_item': item_id,
             'select_count': quantity,
             'mmtoken': mm_token,
-            'select_pane': 'item'***REMOVED***)
+            'select_pane': 'item'})
         resp = bs(resp.text, 'html.parser')
         assert resp.find('img', onclick='mooglemail.remove_attachment(0)')
 
@@ -98,10 +98,10 @@ class HVInterface(object):
         resp = self.session.post(new_mail_url, data={
             'action': 'attach_cod',
             'action_value': cod_amount,
-            'mmtoken': mm_token***REMOVED***)
+            'mmtoken': mm_token})
         resp = bs(resp.text, 'html.parser')
 
         find_string = 'Requested Payment on Delivery: ' \
-                      + f"{cod_amount:,***REMOVED***" \
+                      + f"{cod_amount:,}" \
                       + ' credits'
         assert resp.find('div', string=find_string)

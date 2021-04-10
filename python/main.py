@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-***REMOVED***
+import requests
 import sqlite3
 import urllib
 from datetime import datetime
@@ -54,10 +54,10 @@ def update_price(auctionTopicID, auctionDbTable):
                         db.update(auctionDbTable, bid.capitalize(), 'PRICE', price_now)
                         db.update(auctionDbTable, bid.capitalize(), 'Winner', user)
                         db.update(auctionDbTable, bid.capitalize(), 'LOG', postId)
-                    # out = f'{user***REMOVED***在{ID***REMOVED***中{bid***REMOVED***出价{price***REMOVED***,数据库中{winner***REMOVED***{price***REMOVED***{postId***REMOVED***'
+                    # out = f'{user}在{ID}中{bid}出价{price},数据库中{winner}{price}{postId}'
                     # print(out)
             latestID = ID
-    print(f'数据库更新成功{latestID***REMOVED***')
+    print(f'数据库更新成功{latestID}')
     return latestID
 def main():
     title = "[Auction]Xuan's Auction #2"
@@ -89,13 +89,13 @@ def main():
     [/list]'''
     edit_post = api.full_edit(90, 246614, 5879662, title, content=content_1, description=update_info)
 
-    bbcode1 = f"[size=3][b]{update_info***REMOVED***[/b][/size]\n\n" + str(db.BBCode('ISK002'))
+    bbcode1 = f"[size=3][b]{update_info}[/b][/size]\n\n" + str(db.BBCode('ISK002'))
 
     edit_post = api.full_edit(90, 246614, 5879663, title, content=bbcode1, description=update_info)
 
     post_result = json.loads(edit_post)
     if post_result['data'] != 'error':
-        print(f"论坛数据更新成功{update_info***REMOVED***")
+        print(f"论坛数据更新成功{update_info}")
     else:
         print("论坛数据更新失败")
 

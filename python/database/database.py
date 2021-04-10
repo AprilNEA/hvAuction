@@ -5,10 +5,10 @@ db_name = r'D:\Github\hv-Auction\database\auction.db'
 def add(table,key,seller,name,link,features):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    sql = f"INSERT INTO {table***REMOVED***(ID,SELLER,NAME,LINK,FEATURES) VALUES ('{key***REMOVED***','{seller***REMOVED***','{name***REMOVED***','{link***REMOVED***','{features***REMOVED***')"
+    sql = f"INSERT INTO {table}(ID,SELLER,NAME,LINK,FEATURES) VALUES ('{key}','{seller}','{name}','{link}','{features}')"
     c.execute(sql)
     conn.commit()
-    print(f'Record {key***REMOVED***,{seller***REMOVED***,{name***REMOVED***,{features***REMOVED*** created successfully')
+    print(f'Record {key},{seller},{name},{features} created successfully')
     conn.close()
 
 #add('ISK001','a1','i','123','11')
@@ -16,7 +16,7 @@ def add(table,key,seller,name,link,features):
 def read(table):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table***REMOVED***")
+    cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table}")
     for row in cursor:
        for i in row:
            print(i)
@@ -27,7 +27,7 @@ read('ISK001')
 def update(table,id,which,key):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    sql = f"UPDATE {table***REMOVED*** set {which***REMOVED*** = '{key***REMOVED***' where ID= '{id***REMOVED***'"
+    sql = f"UPDATE {table} set {which} = '{key}' where ID= '{id}'"
     print(sql)
     c.execute(sql)
     conn.commit()
@@ -39,7 +39,7 @@ def delete(table,id):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
     print("Opened database successfully")
-    sql = f"DELETE from {table***REMOVED*** where ID= '{id***REMOVED***';"
+    sql = f"DELETE from {table} where ID= '{id}';"
     c.execute(sql)
     conn.commit()
     print("Total number of rows deleted :", conn.total_changes)

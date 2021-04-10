@@ -1,15 +1,15 @@
 import * as cheerio from 'cheerio';
-import { parse as parseBid ***REMOVED*** from './lib/bid/tokenizer';
-import { Bid, Forum ***REMOVED*** from './@types/thread';
-import { parsePrice ***REMOVED*** from './util/price';
-import { getPage ***REMOVED*** from './util/network';
+import { parse as parseBid } from './lib/bid/tokenizer';
+import { Bid, Forum } from './@types/thread';
+import { parsePrice } from './util/price';
+import { getPage } from './util/network';
 
 import express from 'express';
 
 function parsePages(html: string, threadId: number): {
   posts: Forum.Reply[],
   nextPage: string | undefined
-***REMOVED*** {
+} {
   const results: Forum.Reply[] = [];
 
   const $ = cheerio.load(html);
@@ -28,7 +28,7 @@ function parsePages(html: string, threadId: number): {
         const timestamp = new Date(date).getTime();
         const bid = parseBid(content);
         const isEdited = content.includes('This post has been edited by');
-        const postLink = `https://forums.e-hentai.org/index.php?showtopic=${threadId***REMOVED***&view=findpost&p=${$id***REMOVED***`;
+        const postLink = `https://forums.e-hentai.org/index.php?showtopic=${threadId}&view=findpost&p=${$id}`;
 
         results.push({
           postId,
@@ -40,39 +40,39 @@ function parsePages(html: string, threadId: number): {
           content,
           isEdited,
           bid
-        ***REMOVED***);
-      ***REMOVED***
-    ***REMOVED***
-  ***REMOVED***);
+        });
+      }
+    }
+  });
 
   return {
     posts: results,
     nextPage: $('[title="Next page"]').attr('href')
-  ***REMOVED***;
-***REMOVED***
+  };
+}
 
 async function getThreadReplyWalker(url: string, threadId: number, results: Forum.Reply[] = []): Promise<Forum.Reply[]> {
   const html = await getPage(url);
 
   if (html) {
-    const { posts, nextPage ***REMOVED*** = parsePages(html, threadId);
+    const { posts, nextPage } = parsePages(html, threadId);
     results.push(...posts);
 
     if (nextPage) {
       await getThreadReplyWalker(nextPage, threadId, results);
-    ***REMOVED***
-  ***REMOVED***
+    }
+  }
 
   return results;
-***REMOVED***
+}
 
 async function getThreadReply(threadId: number): Promise<Forum.Reply[]> {
   const results: Forum.Reply[] = [];
 
-  await getThreadReplyWalker(`https://forums.e-hentai.org/index.php?showtopic=${threadId***REMOVED***`, threadId, results);
+  await getThreadReplyWalker(`https://forums.e-hentai.org/index.php?showtopic=${threadId}`, threadId, results);
 
   return results;
-***REMOVED***
+}
 
 export async function repliesListRequestHandler(req: express.Request, res: express.Response): Promise<void> {
   if (req.params && req.params.id && typeof req.params.id === 'string') {
@@ -87,25 +87,25 @@ export async function repliesListRequestHandler(req: express.Request, res: expre
           code: 0,
           msg: '',
           data: posts
-        ***REMOVED***).end();
+        }).end();
 
         return;
-      ***REMOVED*** catch (e) {
+      } catch (e) {
         res.status(401).send({
           code: 1,
           msg: 'Something went wrong when fetching & parse replies',
           data: null
-        ***REMOVED***).end();
-      ***REMOVED***
-    ***REMOVED***
-  ***REMOVED***
+        }).end();
+      }
+    }
+  }
 
   res.status(401).json({
     code: 1,
     msg: 'Missing :id parameter, or :id paramater is invalid',
     data: null
-  ***REMOVED***).end();
-***REMOVED***
+  }).end();
+}
 
 export async function bidItemsRequestHandler(req: express.Request, res: express.Response): Promise<void> {
   if (req.params && req.params.id && typeof req.params.id === 'string') {
@@ -113,7 +113,7 @@ export async function bidItemsRequestHandler(req: express.Request, res: express.
     if (!isNaN(num)) {
       const threadId = num;
 
-      const bidMap: Bid.BidsMap = {***REMOVED***;
+      const bidMap: Bid.BidsMap = {};
 
       const posts = await getThreadReply(threadId);
       posts.forEach((post) => {
@@ -128,9 +128,9 @@ export async function bidItemsRequestHandler(req: express.Request, res: express.
             date: post.date,
             timestamp: post.timestamp,
             price: bidPrice === 'start' || bidPrice === 'cancel' ? bidPrice : parsePrice(bidPrice || '0')
-          ***REMOVED***);
-        ***REMOVED***);
-      ***REMOVED***);
+          });
+        });
+      });
 
       if (req.params.item && typeof req.params.item === 'string') {
         const item = req.params.item.toLowerCase();
@@ -140,33 +140,33 @@ export async function bidItemsRequestHandler(req: express.Request, res: express.
             code: 0,
             msg: '',
             data: bidMap[item]
-          ***REMOVED***).end();
+          }).end();
 
           return;
-        ***REMOVED***
+        }
 
         res.status(200).json({
           code: 0,
-          msg: `There is no bid related with ${item***REMOVED***.`,
+          msg: `There is no bid related with ${item}.`,
           data: []
-        ***REMOVED***).end();
+        }).end();
 
         return;
-      ***REMOVED***
+      }
 
       res.status(200).json({
         code: 0,
         msg: '',
         data: bidMap
-      ***REMOVED***).end();
+      }).end();
 
       return;
-    ***REMOVED***
-  ***REMOVED***
+    }
+  }
 
   res.status(401).json({
     code: 1,
     msg: 'Missing :id parameter, or :id paramater is invalid',
     data: null
-  ***REMOVED***).end();
-***REMOVED***
+  }).end();
+}

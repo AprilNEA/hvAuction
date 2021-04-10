@@ -11,7 +11,7 @@ class DATABASE:
         c = conn.cursor()
         winner = 0
         price = 0
-        cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table***REMOVED*** where ID = '{id***REMOVED***'")
+        cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table} where ID = '{id}'")
         for row in cursor:
             winner = row[6]
             price = row[5]
@@ -21,7 +21,7 @@ class DATABASE:
     def update(self, table, id, which, key):
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
-        sql = f"UPDATE {table***REMOVED*** set {which***REMOVED*** = '{key***REMOVED***' where ID= '{id***REMOVED***'"
+        sql = f"UPDATE {table} set {which} = '{key}' where ID= '{id}'"
         c.execute(sql)
         conn.commit()
         conn.close()
@@ -32,7 +32,7 @@ class DATABASE:
         c = conn.cursor()
         winner = 0
         price = 0
-        cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table***REMOVED*** where ID = '{id***REMOVED***'")
+        cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table} where ID = '{id}'")
         for row in cursor:
             winner = row[6]
             price = row[5]
@@ -43,7 +43,7 @@ class DATABASE:
     def BBCode(self, table):
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
-        cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table***REMOVED***")
+        cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table}")
         mat, one, two, sta, shd, clo, lig, hea = 0, 0, 0, 0, 0, 0, 0, 0
         out = "\n"
         for row in cursor:
@@ -78,18 +78,18 @@ class DATABASE:
                 elif price >= 10000:
                     price = str(round(price / 1000, 2)) + "k"
                 if row[0].find('Mat') != -1:
-                    out = out + f'[{row[0]***REMOVED***] {row[2]***REMOVED*** (seller:{row[1]***REMOVED***)[b]{row[6]***REMOVED*** {price***REMOVED*** [/b]{row[8]***REMOVED***\n'
+                    out = out + f'[{row[0]}] {row[2]} (seller:{row[1]})[b]{row[6]} {price} [/b]{row[8]}\n'
                 else:
                     bbcode = api.equip_allinfo(row[3])["data"]["bbcode"]
-                    #out = out + f'[{row[0]***REMOVED***] [url={row[3]***REMOVED***]{row[2]***REMOVED***[/url] ({row[4]***REMOVED***) (seller:{row[1]***REMOVED***)[b]{row[6]***REMOVED*** {price***REMOVED*** [/b]{row[8]***REMOVED***\n'
-                    out = out + f'[{row[0]***REMOVED***] [url={row[3]***REMOVED***]{bbcode***REMOVED***[/url] ({row[4]***REMOVED***) (seller:{row[1]***REMOVED***)[b]{row[6]***REMOVED*** {price***REMOVED*** [/b]{row[8]***REMOVED***\n'
+                    #out = out + f'[{row[0]}] [url={row[3]}]{row[2]}[/url] ({row[4]}) (seller:{row[1]})[b]{row[6]} {price} [/b]{row[8]}\n'
+                    out = out + f'[{row[0]}] [url={row[3]}]{bbcode}[/url] ({row[4]}) (seller:{row[1]})[b]{row[6]} {price} [/b]{row[8]}\n'
             else:
                 if row[0].find('Mat') != -1:
-                    out = out + f'[{row[0]***REMOVED***] {row[2]***REMOVED*** (seller:{row[1]***REMOVED***)\n'
+                    out = out + f'[{row[0]}] {row[2]} (seller:{row[1]})\n'
                 else:
                     bbcode = api.equip_allinfo(row[3])["data"]["bbcode"]
-                    #out = out + f'[{row[0]***REMOVED***] [url={row[3]***REMOVED***]{row[2]***REMOVED***[/url] ({row[4]***REMOVED***) (seller:{row[1]***REMOVED***)\n'
-                    out = out + f'[{row[0]***REMOVED***] [url={row[3]***REMOVED***]{bbcode***REMOVED***[/url] ({row[4]***REMOVED***) (seller:{row[1]***REMOVED***)\n'
+                    #out = out + f'[{row[0]}] [url={row[3]}]{row[2]}[/url] ({row[4]}) (seller:{row[1]})\n'
+                    out = out + f'[{row[0]}] [url={row[3]}]{bbcode}[/url] ({row[4]}) (seller:{row[1]})\n'
         conn.close()
 
         return out

@@ -8,9 +8,9 @@ declare module 'hexo-log' {
     w: (...arg: any[]) => void;
     error: (...arg: any[]) => void;
     e: (...arg: any[]) => void;
-  ***REMOVED***
+  }
 
-  function hexoLog(options?: { silent?: boolean; debug?: boolean; ***REMOVED***): HexoLogger;
+  function hexoLog(options?: { silent?: boolean; debug?: boolean; }): HexoLogger;
 
   export = hexoLog;
-***REMOVED***
+}

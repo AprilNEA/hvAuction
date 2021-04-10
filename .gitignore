@@ -7,4 +7,5 @@ tmp/
 temp*
 dist
 .env
+*.ini
 __pycache__

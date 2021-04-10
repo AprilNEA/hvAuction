@@ -6,23 +6,23 @@ export function parsePrice(input: string): number | null {
 
     if (matches[2] === 'k' || matches[2] === 'K') {
       return number * 1000;
-    ***REMOVED***
+    }
     if (matches[2] === 'm' || matches[2] === 'M') {
       return number * 1000000;
-    ***REMOVED***
+    }
 
     return number;
-  ***REMOVED***
+  }
 
   return null;
-***REMOVED***
+}
 
 export function formatPrice(price: number): string {
   if (price >= 1000000) {
-    return `${price / 1000000***REMOVED***m`;
-  ***REMOVED*** if (price >= 1000) {
-    return `${price / 1000***REMOVED***k`;
-  ***REMOVED***
+    return `${price / 1000000}m`;
+  } if (price >= 1000) {
+    return `${price / 1000}k`;
+  }
 
   return String(price);
-***REMOVED***
+}

@@ -4,13 +4,13 @@ interface LexToken {
   type: LexType;
   index: number;
   value: string;
-***REMOVED***
+}
 
 export interface ParseBidResults {
   [key: string]: string | null
-***REMOVED***
+}
 
-const INVALID_TOKENS = new Set(['[', ']', '(', ')', '{', '***REMOVED***', '-', ':']);
+const INVALID_TOKENS = new Set(['[', ']', '(', ')', '{', '}', '-', ':']);
 
 /**
  * Tokenize input string.
@@ -29,7 +29,7 @@ export function lexer(str: string): LexToken[] {
     if (char === ' ' || char === '\n' || char === '\t' || char === '\f' || char === '\r' || INVALID_TOKENS.has(char)) {
       i++;
       continue;
-    ***REMOVED***
+    }
 
     // Skip words
     if (
@@ -38,7 +38,7 @@ export function lexer(str: string): LexToken[] {
     ) {
       i = i + 2;
       continue;
-    ***REMOVED***
+    }
 
     // PRICE should always come after NAME
     if (STATUS === 'NAME') {
@@ -48,9 +48,9 @@ export function lexer(str: string): LexToken[] {
       ) {
         STATUS = 'PRICE';
         i = i + 4;
-        tokens.push({ type: STATUS, index: i, value: 'start' ***REMOVED***);
+        tokens.push({ type: STATUS, index: i, value: 'start' });
         continue;
-      ***REMOVED*** else if (charCode >= 48 && charCode <= 57) {
+      } else if (charCode >= 48 && charCode <= 57) {
         let price = '';
         let j = i;
 
@@ -66,25 +66,25 @@ export function lexer(str: string): LexToken[] {
           ) {
             price += str[j++];
             continue;
-          ***REMOVED***
+          }
 
           break;
-        ***REMOVED***
+        }
 
         if (price) {
           STATUS = 'PRICE';
-          tokens.push({ type: STATUS, index: i, value: price ***REMOVED***);
-        ***REMOVED***
+          tokens.push({ type: STATUS, index: i, value: price });
+        }
 
         if (i === j) {
           i = i + 1;
-        ***REMOVED*** else {
+        } else {
           i = j;
-        ***REMOVED***
+        }
 
         continue;
-      ***REMOVED***
-    ***REMOVED***
+      }
+    }
 
     // NAME
     if (
@@ -113,45 +113,45 @@ export function lexer(str: string): LexToken[] {
         ) {
           name += str[j++];
           continue;
-        ***REMOVED***
+        }
 
         break;
-      ***REMOVED***
+      }
 
       if (name) {
         STATUS = 'NAME';
-        tokens.push({ type: STATUS, index: i, value: name ***REMOVED***);
-      ***REMOVED***
+        tokens.push({ type: STATUS, index: i, value: name });
+      }
 
       i = j;
       continue;
-    ***REMOVED***
+    }
 
     i++;
-  ***REMOVED***
+  }
 
-  tokens.push({ type: 'END', index: i, value: '' ***REMOVED***);
+  tokens.push({ type: 'END', index: i, value: '' });
 
   return tokens;
-***REMOVED***
+}
 
 export function parse(input: string): ParseBidResults {
-  const results: ParseBidResults = {***REMOVED***;
+  const results: ParseBidResults = {};
   const tokens = lexer(input);
 
   for (const token of tokens) {
     if (token.type === 'NAME') {
       results[token.value.toLowerCase()] = null;
-    ***REMOVED***
+    }
     if (token.type === 'PRICE') {
       Object.keys(results).forEach(k => {
         if (results[k] === null) results[k] = token.value;
-      ***REMOVED***);
-    ***REMOVED***
+      });
+    }
     if (token.type === 'END') {
       break;
-    ***REMOVED***
-  ***REMOVED***
+    }
+  }
 
   return results;
-***REMOVED***
+}

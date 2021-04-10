@@ -1,4 +1,4 @@
-import { ParseBidResults ***REMOVED*** from '../lib/bid/tokenizer';
+import { ParseBidResults } from '../lib/bid/tokenizer';
 
 export namespace Forum {
   export interface Reply {
@@ -11,8 +11,8 @@ export namespace Forum {
     date: string
     timestamp: number
     bid: ParseBidResults
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
 export namespace Bid {
   export interface BidInfo {
@@ -23,13 +23,13 @@ export namespace Bid {
     date: string
     timestamp: number
     price: number | 'start' | 'cancel' | null
-  ***REMOVED***
+  }
 
   export interface BidsMap {
     [key: string]: BidInfo[]
-  ***REMOVED***
+  }
 
   export interface CurrentBidWinners {
     [key: string]: BidInfo
-  ***REMOVED***
-***REMOVED***
+  }
+}

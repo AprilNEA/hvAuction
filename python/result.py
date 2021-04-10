@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-***REMOVED***
+import requests
 import sqlite3
 import urllib
 from datetime import datetime
@@ -26,13 +26,13 @@ conn = sqlite3.connect(db_name)
 c = conn.cursor()
 winner = 0
 price = 0
-cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,PRICE,WINNER from {table***REMOVED***")
-seller = {***REMOVED***
-buyer = {***REMOVED***
-buyer_2 = {***REMOVED***
+cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,PRICE,WINNER from {table}")
+seller = {}
+buyer = {}
+buyer_2 = {}
 for row in cursor:
     if row[5] == None:
-        print(f'货物{row[2]***REMOVED***应退回{row[1]***REMOVED***，链接是{row[3]***REMOVED***')
+        print(f'货物{row[2]}应退回{row[1]}，链接是{row[3]}')
     else:
         if not row[1] in seller:
             seller[row[1]] = float(row[4])
@@ -44,11 +44,11 @@ for row in cursor:
         else:
             buyer[row[5]] = float(buyer[row[5]]) + float(row[4])
             buyer_2[row[5]] = buyer_2[row[5]] + row[2]
-        # print(f'货物{row[2]***REMOVED***应发往{row[5]***REMOVED***，链接是{row[3]***REMOVED***')
+        # print(f'货物{row[2]}应发往{row[5]}，链接是{row[3]}')
 conn.close()
 for i in seller:
-    print(f'{i***REMOVED***收款{price_conver_2(seller[i])***REMOVED***')
+    print(f'{i}收款{price_conver_2(seller[i])}')
 for j in buyer:
-    print(f'{j***REMOVED***付款{price_conver_2(buyer[j])***REMOVED***')
+    print(f'{j}付款{price_conver_2(buyer[j])}')
 for j in buyer_2:
-    print(f'{j***REMOVED***付款{buyer_2[j]***REMOVED***')
+    print(f'{j}付款{buyer_2[j]}')
