@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import hexoLogger from 'hexo-log';
-import { bidItemsRequestHandler, repliesListRequestHandler ***REMOVED*** from './auction';
-import { fetchEquipmentInfo ***REMOVED*** from './equip';
-import { quickEditPost ***REMOVED*** from './thread';
+import { bidItemsRequestHandler, repliesListRequestHandler } from './auction';
+import { fetchEquipmentInfo } from './equip';
+import { quickEditPost } from './thread';
 import cors from 'cors';
-import { requestCredential ***REMOVED*** from './lib/middleware/requestEhCredential';
-import { fullEditPost ***REMOVED*** from './lib/editPost/full_edit';
+import { requestCredential } from './lib/middleware/requestEhCredential';
+import { fullEditPost } from './lib/editPost/full_edit';
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ dotenv.config();
 
   app.use(express.json({
     limit: '2mb'
-  ***REMOVED***));
+  }));
   app.use(cors());
 
   // Fetch original replies data
@@ -47,6 +47,6 @@ dotenv.config();
   app.get('/hv/equip/*', requestCredential, fetchEquipmentInfo);
 
   app.listen(port, () => {
-    log.info(`API Server listening at http://localhost:${port***REMOVED***`);
-  ***REMOVED***);
-***REMOVED***)();
+    log.info(`API Server listening at http://localhost:${port}`);
+  });
+})();

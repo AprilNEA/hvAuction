@@ -13,7 +13,7 @@
     "got": "^11.8.2",
     "hexo-log": "^2.0.0",
     "node-cache": "^5.1.2"
-  ***REMOVED***,
+  },
   "devDependencies": {
     "@types/chai": "^4.2.15",
     "@types/cors": "^2.8.10",
@@ -28,20 +28,20 @@
     "ts-mocha": "^8.0.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
-  ***REMOVED***,
+  },
   "scripts": {
     "updateDB": "ts-node tools/fetchDB.ts",
     "build": "tsc",
     "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts"
-  ***REMOVED***,
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SpaceHV/hv-auction.git"
-  ***REMOVED***,
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SpaceHV/hv-auction/issues"
-  ***REMOVED***,
+  },
   "homepage": "https://github.com/SpaceHV/hv-auction#readme"
-***REMOVED***
+}
