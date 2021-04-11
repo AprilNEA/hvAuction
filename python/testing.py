@@ -1,68 +1,658 @@
-from datetime import datetime
-import time
-import sqlite3
+# coding=gbk
 import requests
-import urllib
-import json
-from databasesq3 import DATABASE
-from hvapi import HVAPI
-api = HVAPI(r'http://hk.sukeycz.com:3001')
-#print(api.equip_allinfo('https://hentaiverse.org/equip/268325913/a916142cda'))
-bbcode = '''
-[size=4][b]Materials/Special[/b][/size]
+import csv
+import sqlite3
 
-[Mat01] 10 x Flower Vase (seller:OnceForAll)
-[Mat02] 10 x Bubble-Gum (seller:OnceForAll)
-[Mat03] 10 x Crystallized Phazon (seller:OnceForAll)
-[Mat04] 10 x Repurposed Actuator (seller:OnceForAll)[b]paramount111 100.0k [/b]#10
-[Mat05] 20 x Crystallized Phazon (seller:unikwind)
-[Mat06] 100 x High-Grade Cloth (seller:unikwind)
-[Mat07] 45 x High-Grade Cloth (seller:OnceForAll)
+SERVER = 'http://hk.sukeycz.com:3001'
 
-[size=4][b]One-Handed[/b][/size]
+One = [{'name': 'Legendary Ethereal Rapier of Balance', 'category': '1H',
+        'info': '320, IW 10, ADB 59%, Parry 92%, Str 87%, Dex 89%, Agi 59%',
+        'percentile': {'ADB': 59, 'Parry': 92, 'Str': 87, 'Dex': 89, 'Agi': 59}, 'level': 320, 'tier': 10,
+        'totalPxpThisLevel': 0, 'quality': 'Legendary', 'prefix': 'Ethereal', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Balance', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 358, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 5, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Legendary [b][color=#f00]Ethereal[/color][/b] [b]Rapier[/b] of Balance', 'seller': '稗田阿一',
+        'link': 'https://hentaiverse.org/isekai/equip/370251/5a04d02fba'},
+       {'name': 'Legendary Demonic Rapier of Balance', 'category': '1H',
+        'info': '367, ADB 61%, Parry 15%, Str 63%, Dex 39%, Agi 2%',
+        'percentile': {'ADB': 61, 'Parry': 15, 'Str': 63, 'Dex': 39, 'Agi': 2}, 'level': 367, 'tier': 0,
+        'totalPxpThisLevel': 357, 'quality': 'Legendary', 'prefix': 'Demonic', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Balance', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 357, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Legendary Demonic [b]Rapier[/b] of Balance', 'seller': 'estiy',
+        'link': 'https://hentaiverse.org/isekai/equip/424560/fd51f0bc21'},
+       {'name': 'Legendary Fiery Rapier of Balance', 'category': '1H',
+        'info': '350, ADB 58%, Parry 25%, Str 63%, Dex 53%, Agi 7%',
+        'percentile': {'ADB': 58, 'Parry': 25, 'Str': 63, 'Dex': 53, 'Agi': 7}, 'level': 350, 'tier': 0,
+        'totalPxpThisLevel': 358, 'quality': 'Legendary', 'prefix': 'Fiery', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Balance', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 358, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Legendary Fiery [b]Rapier[/b] of Balance', 'seller': '稗田阿一',
+        'link': 'https://hentaiverse.org/isekai/equip/461117/a8ce0b97bf'},
+       {'name': 'Legendary Arctic Rapier of Slaughter', 'category': '1H',
+        'info': '328, IW 10, ADB 85%, Parry 19%, Str 70%, Dex 85%, Agi 76%',
+        'percentile': {'ADB': 85, 'Parry': 19, 'Str': 70, 'Dex': 85, 'Agi': 76}, 'level': 328, 'tier': 10,
+        'totalPxpThisLevel': 0, 'quality': 'Legendary', 'prefix': 'Arctic', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 358, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 5, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Legendary Arctic Rapier of Slaughter', 'seller': '稗田阿一',
+        'link': 'https://hentaiverse.org/isekai/equip/387067/39e4c6c1d3'},
+       {'name': 'Legendary Tempestuous Rapier of Slaughter', 'category': '1H',
+        'info': '362, ADB 10%, Parry 67%, Str 57%, Dex 53%, Agi 52%',
+        'percentile': {'ADB': 10, 'Parry': 67, 'Str': 57, 'Dex': 53, 'Agi': 52}, 'level': 362, 'tier': 0,
+        'totalPxpThisLevel': 358, 'quality': 'Legendary', 'prefix': 'Tempestuous', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 358, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Legendary Tempestuous Rapier of Slaughter', 'seller': 'KingArtson',
+        'link': 'https://hentaiverse.org/isekai/equip/424934/0f0fed27e3'},
+       {'name': 'Legendary Ethereal Wakizashi of the Nimble', 'category': '1H',
+        'info': '370, ADB 35%, Parry 11%, Str 26%, Dex 27%, Agi 66%',
+        'percentile': {'ADB': 35, 'Parry': 11, 'Str': 26, 'Dex': 27, 'Agi': 66}, 'level': 370, 'tier': 0,
+        'totalPxpThisLevel': 357, 'quality': 'Legendary', 'prefix': 'Ethereal', 'slot': '', 'type': 'Wakizashi',
+        'suffix': 'Nimble', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 357, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Legendary [b][color=#f00]Ethereal[/color][/b] [b]Wakizashi[/b] of the Nimble',
+        'seller': 'Pretty anon', 'link': 'https://hentaiverse.org/isekai/equip/468037/7b40c8d5df'},
+       {'name': 'Magnificent Ethereal Rapier of Slaughter', 'category': '1H',
+        'info': '369, ADB 38%, Parry 79%, Str 15%, Dex 50%, Agi 38%',
+        'percentile': {'ADB': 38, 'Parry': 79, 'Str': 15, 'Dex': 50, 'Agi': 38}, 'level': 369, 'tier': 0,
+        'totalPxpThisLevel': 327, 'quality': 'Magnificent', 'prefix': 'Ethereal', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 327, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Magnificent Ethereal Rapier of Slaughter', 'seller': 'Ming28561',
+        'link': 'https://hentaiverse.org/isekai/equip/432151/40305e06d3'},
+       {'name': 'Magnificent Arctic Rapier of Slaughter', 'category': '1H',
+        'info': '357, ADB 25%, Parry 69%, Str 81%, Dex 7%, Agi 87%',
+        'percentile': {'ADB': 25, 'Parry': 69, 'Str': 81, 'Dex': 7, 'Agi': 87}, 'level': 357, 'tier': 0,
+        'totalPxpThisLevel': 333, 'quality': 'Magnificent', 'prefix': 'Arctic', 'slot': '', 'type': 'Rapier',
+        'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Agility'], 'pxp0': 333, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Magnificent Arctic Rapier of Slaughter', 'seller': 'estiy',
+        'link': 'https://hentaiverse.org/isekai/equip/327692/400b0c5343'},
+       {'name': 'Magnificent Tempestuous Rapier of Slaughter', 'category': '1H',
+        'info': '352, ADB 52%, Parry 31%, Str 96%, Dex 17%',
+        'percentile': {'ADB': 52, 'Parry': 31, 'Str': 96, 'Dex': 17}, 'level': 352, 'tier': 0, 'totalPxpThisLevel': 324,
+        'quality': 'Magnificent', 'prefix': 'Tempestuous', 'slot': '', 'type': 'Rapier', 'suffix': 'Slaughter',
+        'pabs': ['Strength', 'Dexterity'], 'pxp0': 324, 'isObsolete': False,
+        'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                    'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+        'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+        'bbcode': 'Magnificent Tempestuous Rapier of Slaughter', 'seller': 'estiy',
+        'link': 'https://hentaiverse.org/isekai/equip/293506/4a6db462ed'}]
+Staff = [{'name': 'Legendary Demonic Willow Staff of Destruction', 'category': 'Staff',
+          'info': '329, MDB 32%, Int 40%, Wis 27%, Dark EDB 15%, Forb Prof 62%, Depr Prof 28%, CR 0%, Burden 94%',
+          'percentile': {'MDB': 32, 'Int': 40, 'Wis': 27, 'Dark EDB': 15, 'Forb Prof': 62, 'Depr Prof': 28, 'CR': 0,
+                         'Burden': 94}, 'level': 329, 'tier': 0, 'totalPxpThisLevel': 347, 'quality': 'Legendary',
+          'prefix': 'Demonic', 'slot': '', 'type': 'Willow', 'suffix': 'Destruction',
+          'pabs': ['Intelligence', 'Wisdom'], 'pxp0': 347, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary [b]Demonic[/b] [b]Willow Staff[/b] of [b]Destruction[/b]', 'seller': 'sharmy',
+          'link': 'https://hentaiverse.org/isekai/equip/453719/383ca22ec7'},
+         {'name': 'Legendary Tempestuous Redwood Staff Of Destruction', 'category': 'Staff',
+          'info': '344, MDB 13%, Int 69%, Wis 24%, Wind EDB 52%, Elem Prof 45%, Depr Prof 84%, Burden 83%',
+          'percentile': {'MDB': 13, 'Int': 69, 'Wis': 24, 'Wind EDB': 52, 'Elem Prof': 45, 'Depr Prof': 84,
+                         'Burden': 83}, 'level': 344, 'tier': 0, 'totalPxpThisLevel': 352, 'quality': 'Legendary',
+          'prefix': 'Tempestuous', 'slot': '', 'type': 'Redwood', 'suffix': 'Destruction',
+          'pabs': ['Intelligence', 'Wisdom'], 'pxp0': 352, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary [b]Tempestuous[/b] [b]Redwood Staff[/b] of [b]Destruction[/b]', 'seller': 'KingArtson',
+          'link': 'https://hentaiverse.org/isekai/equip/288895/2a2fe7837c'},
+         {'name': 'Magnificent Demonic Willow Staff of Destruction', 'category': 'Staff',
+          'info': '362, MDB 90%, Int 19%, Wis 76%, Dark EDB 12%, Forb Prof 46%, Depr Prof 3%, CR 19%, Burden 76%',
+          'percentile': {'MDB': 90, 'Int': 19, 'Wis': 76, 'Dark EDB': 12, 'Forb Prof': 46, 'Depr Prof': 3, 'CR': 19,
+                         'Burden': 76}, 'level': 362, 'tier': 0, 'totalPxpThisLevel': 325, 'quality': 'Magnificent',
+          'prefix': 'Demonic', 'slot': '', 'type': 'Willow', 'suffix': 'Destruction',
+          'pabs': ['Intelligence', 'Wisdom'], 'pxp0': 325, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b]Demonic[/b] [b]Willow Staff[/b] of [b]Destruction[/b]', 'seller': 'KingArtson',
+          'link': 'https://hentaiverse.org/isekai/equip/425080/3e71bcf290'},
+         {'name': 'Magnificent Tempestuous Willow Staff Of Destruction', 'category': 'Staff',
+          'info': '362, MDB 53%, Int 52%, Wis 33%, Wind EDB 80%, Elem Prof 32%, Depr Prof 29%, CR 38%, Burden 59%',
+          'percentile': {'MDB': 53, 'Int': 52, 'Wis': 33, 'Wind EDB': 80, 'Elem Prof': 32, 'Depr Prof': 29, 'CR': 38,
+                         'Burden': 59}, 'level': 362, 'tier': 0, 'totalPxpThisLevel': 327, 'quality': 'Magnificent',
+          'prefix': 'Tempestuous', 'slot': '', 'type': 'Willow', 'suffix': 'Destruction',
+          'pabs': ['Intelligence', 'Wisdom'], 'pxp0': 327, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b]Tempestuous[/b] [b]Willow Staff[/b] of [b]Destruction[/b]', 'seller': 'KingArtson',
+          'link': 'https://hentaiverse.org/isekai/equip/425083/e7a590618a'},
+         {'name': 'Magnificent Shocking Redwood Staff of Mjolnir', 'category': 'Staff',
+          'info': '335, MDB 35%, Int 100%, Wis 40%, Elec EDB 71%, Elem Prof 85%, Depr Prof 24%, Burden 47%',
+          'percentile': {'MDB': 35, 'Int': 100, 'Wis': 40, 'Elec EDB': 71, 'Elem Prof': 85, 'Depr Prof': 24,
+                         'Burden': 47}, 'level': 335, 'tier': 0, 'totalPxpThisLevel': 331, 'quality': 'Magnificent',
+          'prefix': 'Shocking', 'slot': '', 'type': 'Redwood', 'suffix': 'Mjolnir', 'pabs': ['Intelligence', 'Wisdom'],
+          'pxp0': 331, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b]Shocking[/b] [b]Redwood Staff[/b] of Mjolnir', 'seller': 'KingArtson',
+          'link': 'https://hentaiverse.org/isekai/equip/228875/930ccfac99'}]
+Shield = [{'name': 'Legendary Mithril Kite Shield of Stoneskin', 'category': 'Shield',
+           'info': '335 Str Dex End, BLK 3%, Pmit 24%, Mmit 19%, Str 15%, Dex 38%, End 32%, Slas 72%',
+           'percentile': {'BLK': 3, 'Pmit': 24, 'Mmit': 19, 'Str': 15, 'Dex': 38, 'End': 32, 'Slas': 72}, 'level': 335,
+           'tier': 0, 'totalPxpThisLevel': 351, 'quality': 'Legendary', 'prefix': 'Mithril', 'slot': '', 'type': 'Kite',
+           'suffix': 'Stoneskin', 'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 351, 'isObsolete': False,
+           'forging': {
+               'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+               'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+           'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+           'bbcode': 'Legendary Mithril Kite of Stoneskin', 'seller': 'KingArtson',
+           'link': 'https://hentaiverse.org/isekai/equip/228709/ddd773b38b'},
+          {'name': 'Magnificent Force Shield of Deflection', 'category': 'Shield',
+           'info': '359 Str End Agi, BLK 11%, Pmit 5%, Mmit 47%, Str 53%, End 60%, Agi 19%, Pier 58%',
+           'percentile': {'BLK': 11, 'Pmit': 5, 'Mmit': 47, 'Str': 53, 'End': 60, 'Agi': 19, 'Pier': 58}, 'level': 359,
+           'tier': 0, 'totalPxpThisLevel': 326, 'quality': 'Magnificent', 'prefix': '', 'slot': '', 'type': 'Force',
+           'suffix': 'Deflection', 'pabs': ['Strength', 'Endurance', 'Agility'], 'pxp0': 326, 'isObsolete': False,
+           'forging': {
+               'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+               'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969, 'scalingFactor': 22.727272727272727}},
+           'butcher': 0, 'swiftStrike': 0, 'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+           'bbcode': 'Magnificent [b]Force[/b] of [b]Deflection[/b]', 'seller': 'KingArtson',
+           'link': 'https://hentaiverse.org/isekai/equip/400787/8bfe098712'}]
+Cloth = [{'name': 'Legendary Zircon Phase Cap of Surtr', 'category': 'Cloth',
+          'info': '311, Fire EDB 93%, Int 45%, Wis 56%, Evd 45%, Agi 89%, Pmit 53%, Mmit 54%, Crus 21%',
+          'percentile': {'Fire EDB': 93, 'Int': 45, 'Wis': 56, 'Evd': 45, 'Agi': 89, 'Pmit': 53, 'Mmit': 54,
+                         'Crus': 21}, 'level': 311, 'tier': 0, 'totalPxpThisLevel': 362, 'quality': 'Legendary',
+          'prefix': 'Zircon', 'slot': 'Cap', 'type': 'Phase', 'suffix': 'Surtr',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 362, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Legendary Zircon [b]Phase[/b] Cap of Surtr',
+          'seller': 'Ikki Pop', 'link': 'https://hentaiverse.org/isekai/equip/424123/0df5f3b51c'},
+         {'name': 'Legendary Amber Cotton Cap of the Elementalist', 'category': 'Cloth',
+          'info': '364, Elem Prof 91%, Int 72%, Wis 19%, Evd 74%, Agi 33%, Pmit 6%, Mmit 89%, Crus 25%',
+          'percentile': {'Elem Prof': 91, 'Int': 72, 'Wis': 19, 'Evd': 74, 'Agi': 33, 'Pmit': 6, 'Mmit': 89,
+                         'Crus': 25}, 'level': 364, 'tier': 0, 'totalPxpThisLevel': 359, 'quality': 'Legendary',
+          'prefix': 'Amber', 'slot': 'Cap', 'type': 'Cotton', 'suffix': 'Elementalist',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 359, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Amber Cotton Cap of the [b]Elementalist[/b]', 'seller': 'KingArtson',
+          'link': 'https://hentaiverse.org/isekai/equip/440394/2904d1b22c'},
+         {'name': 'Legendary Jade Phase Gloves of Niflheim', 'category': 'Cloth',
+          'info': '363, Cold EDB 3%, Int 6%, Wis 21%, Evd 6%, Agi 17%, Pmit 74%, Mmit 76%, Crus 12%',
+          'percentile': {'Cold EDB': 3, 'Int': 6, 'Wis': 21, 'Evd': 6, 'Agi': 17, 'Pmit': 74, 'Mmit': 76, 'Crus': 12},
+          'level': 363, 'tier': 0, 'totalPxpThisLevel': 352, 'quality': 'Legendary', 'prefix': 'Jade', 'slot': 'Gloves',
+          'type': 'Phase', 'suffix': 'Niflheim', 'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 352,
+          'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Legendary Jade [b]Phase[/b] Gloves of Niflheim',
+          'seller': 'KingArtson', 'link': 'https://hentaiverse.org/isekai/equip/436680/b98940aee5'},
+         {'name': 'Legendary Cobalt Phase Pants of Heimdall', 'category': 'Cloth',
+          'info': '368, Holy EDB 21%, Int 26%, Wis 8%, Evd 41%, Agi 92%, Pmit 36%, Mmit 94%, Crus 71%',
+          'percentile': {'Holy EDB': 21, 'Int': 26, 'Wis': 8, 'Evd': 41, 'Agi': 92, 'Pmit': 36, 'Mmit': 94, 'Crus': 71},
+          'level': 368, 'tier': 0, 'totalPxpThisLevel': 360, 'quality': 'Legendary', 'prefix': 'Cobalt',
+          'slot': 'Pants', 'type': 'Phase', 'suffix': 'Heimdall', 'pabs': ['Agility', 'Intelligence', 'Wisdom'],
+          'pxp0': 360, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Legendary Cobalt [b]Phase[/b] Pants of Heimdall',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/433437/a6920b27b9'},
+         {'name': 'Magnificent Ruby Phase Cap of Fenrir', 'category': 'Cloth',
+          'info': '369, Dark EDB 62%, Int 73%, Wis 82%, Evd 21%, Agi 92%, Pmit 69%, Mmit 16%, Crus 4%',
+          'percentile': {'Dark EDB': 62, 'Int': 73, 'Wis': 82, 'Evd': 21, 'Agi': 92, 'Pmit': 69, 'Mmit': 16, 'Crus': 4},
+          'level': 369, 'tier': 0, 'totalPxpThisLevel': 334, 'quality': 'Magnificent', 'prefix': 'Ruby', 'slot': 'Cap',
+          'type': 'Phase', 'suffix': 'Fenrir', 'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 334,
+          'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent Ruby [b]Phase[/b] Cap of Fenrir',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/446812/d1e7ff6853'},
+         {'name': 'Magnificent Phase Cap of Freyr', 'category': 'Cloth',
+          'info': '343, Wind EDB 45%, Int 61%, Wis 35%, Evd 39%, Agi 2%, Pmit 11%, Mmit 91%, Crus 100%',
+          'percentile': {'Wind EDB': 45, 'Int': 61, 'Wis': 35, 'Evd': 39, 'Agi': 2, 'Pmit': 11, 'Mmit': 91,
+                         'Crus': 100}, 'level': 343, 'tier': 0, 'totalPxpThisLevel': 334, 'quality': 'Magnificent',
+          'prefix': '', 'slot': 'Cap', 'type': 'Phase', 'suffix': 'Freyr',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 334, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent [b]Phase[/b] Cap of Freyr',
+          'seller': 'drgoku', 'link': 'https://hentaiverse.org/isekai/equip/431361/f8ade64877'},
+         {'name': 'Magnificent Cotton Cap of the Heaven-sent', 'category': 'Cloth',
+          'info': '368, Divine Prof 40%, Int 79%, Wis 25%, Evd 24%, Agi 67%, Pmit 51%, Mmit 95%, Crus 94%',
+          'percentile': {'Divine Prof': 40, 'Int': 79, 'Wis': 25, 'Evd': 24, 'Agi': 67, 'Pmit': 51, 'Mmit': 95,
+                         'Crus': 94}, 'level': 368, 'tier': 0, 'totalPxpThisLevel': 340, 'quality': 'Magnificent',
+          'prefix': '', 'slot': 'Cap', 'type': 'Cotton', 'suffix': 'Heaven-sent',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 340, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent Cotton Cap of the [b]Heaven-sent[/b]',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/433435/0e326df958'},
+         {'name': 'Magnificent Phase Robe of Mjolnir', 'category': 'Cloth',
+          'info': '357, Elec EDB 71%, Wis 83%, Evd 71%, Agi 45%, Pmit 50%, Mmit 51%, Crus 42%',
+          'percentile': {'Elec EDB': 71, 'Wis': 83, 'Evd': 71, 'Agi': 45, 'Pmit': 50, 'Mmit': 51, 'Crus': 42},
+          'level': 357, 'tier': 0, 'totalPxpThisLevel': 322, 'quality': 'Magnificent', 'prefix': '', 'slot': 'Robe',
+          'type': 'Phase', 'suffix': 'Mjolnir', 'pabs': ['Agility', 'Wisdom'], 'pxp0': 322, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent [b]Phase[/b] Robe of Mjolnir',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/335296/92f7bf93f5'},
+         {'name': 'Magnificent Cotton Robe of the Heaven-sent', 'category': 'Cloth',
+          'info': '328, Divine Prof 63%, Int 8%, Wis 11%, Evd 29%, Agi 23%, Pmit 49%, Mmit 47%, Crus 34%',
+          'percentile': {'Divine Prof': 63, 'Int': 8, 'Wis': 11, 'Evd': 29, 'Agi': 23, 'Pmit': 49, 'Mmit': 47,
+                         'Crus': 34}, 'level': 328, 'tier': 0, 'totalPxpThisLevel': 329, 'quality': 'Magnificent',
+          'prefix': '', 'slot': 'Robe', 'type': 'Cotton', 'suffix': 'Heaven-sent',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 329, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Cotton Robe of the [b]Heaven-sent[/b]', 'seller': 'sharmy',
+          'link': 'https://hentaiverse.org/isekai/equip/450130/e289e20bb6'},
+         {'name': 'Magnificent Cobalt Phase Gloves of Heimdall', 'category': 'Cloth',
+          'info': '365, Holy EDB 47%, Int 14%, Wis 46%, Evd 34%, Agi 54%, Pmit 44%, Mmit 37%, Crus 42%',
+          'percentile': {'Holy EDB': 47, 'Int': 14, 'Wis': 46, 'Evd': 34, 'Agi': 54, 'Pmit': 44, 'Mmit': 37,
+                         'Crus': 42}, 'level': 365, 'tier': 0, 'totalPxpThisLevel': 328, 'quality': 'Magnificent',
+          'prefix': 'Cobalt', 'slot': 'Gloves', 'type': 'Phase', 'suffix': 'Heimdall',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 328, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Cobalt [b]Phase[/b] Gloves of Heimdall', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/403533/7285b3c639'},
+         {'name': 'Magnificent Zircon Cotton Gloves of The Demon-fiend', 'category': 'Cloth',
+          'info': '365, Forb Prof 1%, Int 23%, Wis 92%, Evd 74%, Agi 81%, Pmit 43%, Mmit 24%, Crus 50%',
+          'percentile': {'Forb Prof': 1, 'Int': 23, 'Wis': 92, 'Evd': 74, 'Agi': 81, 'Pmit': 43, 'Mmit': 24,
+                         'Crus': 50}, 'level': 365, 'tier': 0, 'totalPxpThisLevel': 332, 'quality': 'Magnificent',
+          'prefix': 'Zircon', 'slot': 'Gloves', 'type': 'Cotton', 'suffix': 'Demon-fiend',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 332, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Zircon Cotton Gloves of the [b]Demon-fiend[/b]', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/400011/12eab0cbae'},
+         {'name': 'Magnificent Cotton Gloves of the Elementalist', 'category': 'Cloth',
+          'info': '315, Elem Prof 54%, Wis 71%, Evd 92%, Agi 7%, Pmit 76%, Mmit 68%, Crus 66%',
+          'percentile': {'Elem Prof': 54, 'Wis': 71, 'Evd': 92, 'Agi': 7, 'Pmit': 76, 'Mmit': 68, 'Crus': 66},
+          'level': 315, 'tier': 0, 'totalPxpThisLevel': 323, 'quality': 'Magnificent', 'prefix': '', 'slot': 'Gloves',
+          'type': 'Cotton', 'suffix': 'Elementalist', 'pabs': ['Agility', 'Wisdom'], 'pxp0': 323, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Cotton Gloves of the [b]Elementalist[/b]', 'seller': 'drgoku',
+          'link': 'https://hentaiverse.org/isekai/equip/103902/ce5347b312'},
+         {'name': 'Magnificent Mystic Phase Pants of Freyr', 'category': 'Cloth',
+          'info': '356, Wind EDB 26%, Int 45%, Wis 7%, Mag CD 100%, Evd 23%, Agi 35%, Pmit 41%, Mmit 72%, Crus 66%',
+          'percentile': {'Wind EDB': 26, 'Int': 45, 'Wis': 7, 'Mag CD': 100, 'Evd': 23, 'Agi': 35, 'Pmit': 41,
+                         'Mmit': 72, 'Crus': 66}, 'level': 356, 'tier': 0, 'totalPxpThisLevel': 332,
+          'quality': 'Magnificent', 'prefix': 'Mystic', 'slot': 'Pants', 'type': 'Phase', 'suffix': 'Freyr',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 332, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b][color=#f90]Mystic[/color][/b] [b]Phase[/b] Pants of Freyr', 'seller': 'chjj30',
+          'link': 'https://hentaiverse.org/isekai/equip/362803/d743ff9b77'},
+         {'name': 'Magnificent Onyx Phase Pants of Surtr', 'category': 'Cloth',
+          'info': '343, Fire EDB 8%, Int 37%, Wis 67%, Evd 27%, Pmit 3%, Mmit 60%, Crus 41%',
+          'percentile': {'Fire EDB': 8, 'Int': 37, 'Wis': 67, 'Evd': 27, 'Pmit': 3, 'Mmit': 60, 'Crus': 41},
+          'level': 343, 'tier': 0, 'totalPxpThisLevel': 313, 'quality': 'Magnificent', 'prefix': 'Onyx',
+          'slot': 'Pants', 'type': 'Phase', 'suffix': 'Surtr', 'pabs': ['Intelligence', 'Wisdom'], 'pxp0': 313,
+          'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent Onyx [b]Phase[/b] Pants of Surtr',
+          'seller': 'drgoku', 'link': 'https://hentaiverse.org/isekai/equip/432355/7234d11797'},
+         {'name': 'Magnificent Ruby Phase Pants of Niflheim', 'category': 'Cloth',
+          'info': '364, Cold EDB 22%, Int 52%, Wis 33%, Evd 58%, Agi 13%, Pmit 38%, Mmit 70%, Crus 38%',
+          'percentile': {'Cold EDB': 22, 'Int': 52, 'Wis': 33, 'Evd': 58, 'Agi': 13, 'Pmit': 38, 'Mmit': 70,
+                         'Crus': 38}, 'level': 364, 'tier': 0, 'totalPxpThisLevel': 329, 'quality': 'Magnificent',
+          'prefix': 'Ruby', 'slot': 'Pants', 'type': 'Phase', 'suffix': 'Niflheim',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 329, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent Ruby [b]Phase[/b] Pants of Niflheim',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/390716/8763f4fff3'},
+         {'name': 'Magnificent Zircon Phase Pants of Freyr', 'category': 'Cloth',
+          'info': '363, Wind EDB 27%, Int 40%, Wis 15%, Evd 26%, Agi 14%, Pmit 95%, Mmit 72%, Crus 90%',
+          'percentile': {'Wind EDB': 27, 'Int': 40, 'Wis': 15, 'Evd': 26, 'Agi': 14, 'Pmit': 95, 'Mmit': 72,
+                         'Crus': 90}, 'level': 363, 'tier': 0, 'totalPxpThisLevel': 335, 'quality': 'Magnificent',
+          'prefix': 'Zircon', 'slot': 'Pants', 'type': 'Phase', 'suffix': 'Freyr',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 335, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent Zircon [b]Phase[/b] Pants of Freyr',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/388851/7d5e6b27a3'},
+         {'name': 'Magnificent Charged Cotton Pants of The Heaven-sent', 'category': 'Cloth',
+          'info': '369, Divine Prof 43%, Wis 50%, Cast Speed 47%, Evd 37%, Agi 66%, Pmit 45%, Mmit 69%, Crus 18%',
+          'percentile': {'Divine Prof': 43, 'Wis': 50, 'Cast Speed': 47, 'Evd': 37, 'Agi': 66, 'Pmit': 45, 'Mmit': 69,
+                         'Crus': 18}, 'level': 369, 'tier': 0, 'totalPxpThisLevel': 320, 'quality': 'Magnificent',
+          'prefix': 'Charged', 'slot': 'Pants', 'type': 'Cotton', 'suffix': 'Heaven-sent',
+          'pabs': ['Agility', 'Wisdom'], 'pxp0': 320, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b][color=#f00]Charged[/color][/b] Cotton Pants of the [b]Heaven-sent[/b]',
+          'seller': 'Noni', 'link': 'https://hentaiverse.org/isekai/equip/459690/10ddb85b5f'},
+         {'name': 'Magnificent Cobalt Phase Shoes of Niflheim', 'category': 'Cloth',
+          'info': '304, Cold EDB 92%, Int 37%, Wis 73%, Evd 91%, Pmit 38%, Mmit 92%, Crus 59%',
+          'percentile': {'Cold EDB': 92, 'Int': 37, 'Wis': 73, 'Evd': 91, 'Pmit': 38, 'Mmit': 92, 'Crus': 59},
+          'level': 304, 'tier': 0, 'totalPxpThisLevel': 323, 'quality': 'Magnificent', 'prefix': 'Cobalt',
+          'slot': 'Shoes', 'type': 'Phase', 'suffix': 'Niflheim', 'pabs': ['Intelligence', 'Wisdom'], 'pxp0': 323,
+          'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Cobalt [b]Phase[/b] Shoes of Niflheim', 'seller': 'drgoku',
+          'link': 'https://hentaiverse.org/isekai/equip/78110/b6aecdc6f5'},
+         {'name': 'Magnificent Zircon Phase Shoes of Mjolnir', 'category': 'Cloth',
+          'info': '363, Elec EDB 38%, Int 96%, Wis 40%, Evd 82%, Agi 96%, Pmit 48%, Mmit 75%, Crus 64%',
+          'percentile': {'Elec EDB': 38, 'Int': 96, 'Wis': 40, 'Evd': 82, 'Agi': 96, 'Pmit': 48, 'Mmit': 75,
+                         'Crus': 64}, 'level': 363, 'tier': 0, 'totalPxpThisLevel': 339, 'quality': 'Magnificent',
+          'prefix': 'Zircon', 'slot': 'Shoes', 'type': 'Phase', 'suffix': 'Mjolnir',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 339, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0, 'bbcode': 'Magnificent Zircon [b]Phase[/b] Shoes of Mjolnir',
+          'seller': 'KingArtson', 'link': 'https://hentaiverse.org/isekai/equip/436700/58c84a3d3f'},
+         {'name': 'Magnificent Charged Cotton Shoes of The Demon-fiend', 'category': 'Cloth',
+          'info': '330, Forb Prof 60%, Int 44%, Wis 71%, Cast Speed 9%, Evd 4%, Agi 71%, Pmit 26%, Mmit 5%, Crus 82%',
+          'percentile': {'Forb Prof': 60, 'Int': 44, 'Wis': 71, 'Cast Speed': 9, 'Evd': 4, 'Agi': 71, 'Pmit': 26,
+                         'Mmit': 5, 'Crus': 82}, 'level': 330, 'tier': 0, 'totalPxpThisLevel': 329,
+          'quality': 'Magnificent', 'prefix': 'Charged', 'slot': 'Shoes', 'type': 'Cotton', 'suffix': 'Demon-fiend',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 329, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b][color=#f00]Charged[/color][/b] Cotton Shoes of the [b]Demon-fiend[/b]',
+          'seller': 'KingArtson', 'link': 'https://hentaiverse.org/isekai/equip/192292/94122f9af2'},
+         {'name': 'Magnificent Cobalt Cotton Shoes of The Elementalist', 'category': 'Cloth',
+          'info': '366, Elem Prof 41%, Wis 4%, Evd 9%, Agi 79%, Pmit 24%, Mmit 68%, Crus 57%',
+          'percentile': {'Elem Prof': 41, 'Wis': 4, 'Evd': 9, 'Agi': 79, 'Pmit': 24, 'Mmit': 68, 'Crus': 57},
+          'level': 366, 'tier': 0, 'totalPxpThisLevel': 316, 'quality': 'Magnificent', 'prefix': 'Cobalt',
+          'slot': 'Shoes', 'type': 'Cotton', 'suffix': 'Elementalist', 'pabs': ['Agility', 'Wisdom'], 'pxp0': 316,
+          'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Cobalt Cotton Shoes of the [b]Elementalist[/b]', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/409740/192092be77'},
+         {'name': 'Magnificent Cotton Shoes of the Heaven-sent', 'category': 'Cloth',
+          'info': '369, Divine Prof 6%, Int 95%, Wis 68%, Evd 72%, Agi 26%, Pmit 42%, Mmit 16%, Crus 54%',
+          'percentile': {'Divine Prof': 6, 'Int': 95, 'Wis': 68, 'Evd': 72, 'Agi': 26, 'Pmit': 42, 'Mmit': 16,
+                         'Crus': 54}, 'level': 369, 'tier': 0, 'totalPxpThisLevel': 331, 'quality': 'Magnificent',
+          'prefix': '', 'slot': 'Shoes', 'type': 'Cotton', 'suffix': 'Heaven-sent',
+          'pabs': ['Agility', 'Intelligence', 'Wisdom'], 'pxp0': 331, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Cotton Shoes of the [b]Heaven-sent[/b]', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/446640/95ae3a8356'}]
+Light = [{'name': 'Legendary Zircon Shade Leggings of Negation', 'category': 'Light',
+          'info': '369, ADB 35%, Pmit 96%, Mmit 30%, Evd 29%, Res 28%, Str 83%, Dex 33%, End 29%, Agi 57%, Crus 64%, Slas 71%, Interf 40%',
+          'percentile': {'ADB': 35, 'Pmit': 96, 'Mmit': 30, 'Evd': 29, 'Res': 28, 'Str': 83, 'Dex': 33, 'End': 29,
+                         'Agi': 57, 'Crus': 64, 'Slas': 71, 'Interf': 40}, 'level': 369, 'tier': 0,
+          'totalPxpThisLevel': 377, 'quality': 'Legendary', 'prefix': 'Zircon', 'slot': 'Leggings', 'type': 'Shade',
+          'suffix': 'Negation', 'pabs': ['Strength', 'Dexterity', 'Endurance', 'Agility'], 'pxp0': 377,
+          'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Zircon [b]Shade[/b] Leggings of Negation', 'seller': 'Ming28561',
+          'link': 'https://hentaiverse.org/isekai/equip/433613/a3a4c88f6e'}]
+Heavy = [{'name': 'Peerless Ruby Plate Gauntlets of Deflection', 'category': 'Heavy',
+          'info': '370, Str 100%, Dex 100%, End 100%, Pmit 100%, Mmit 100%, Crus 100%, Slas 100%, Pier 100%, Burden 0%, Interf 0%',
+          'percentile': {'Str': 100, 'Dex': 100, 'End': 100, 'Pmit': 100, 'Mmit': 100, 'Crus': 100, 'Slas': 100,
+                         'Pier': 100, 'Burden': 0, 'Interf': 0}, 'level': 370, 'tier': 0, 'totalPxpThisLevel': 377,
+          'quality': 'Peerless', 'prefix': 'Ruby', 'slot': 'Gauntlets', 'type': 'Plate', 'suffix': 'Deflection',
+          'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 377, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': '[b][color=#f00]P[/color][color=#f90]e[/color][color=#fc0]e[/color][color=#0c0]r[/color][color=#09f]l[/color][color=#00c]e[/color][color=#c0f]s[/color][color=#f00]s[/color][/b] Ruby Plate Gauntlets of Deflection',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/460182/241f7866f2'},
+         {'name': 'Legendary Amber Power Helmet of Protection', 'category': 'Heavy',
+          'info': '357, ADB 83%, Str 94%, Dex 18%, End 80%, Pmit 7%, Mmit 71%, Phy CC 75%, Phy CD 29%, Crus 0%, Slas 29%, Pier 6%, Burden 41%, Interf 95%',
+          'percentile': {'ADB': 83, 'Str': 94, 'Dex': 18, 'End': 80, 'Pmit': 7, 'Mmit': 71, 'Phy CC': 75, 'Phy CD': 29,
+                         'Crus': 0, 'Slas': 29, 'Pier': 6, 'Burden': 41, 'Interf': 95}, 'level': 357, 'tier': 0,
+          'totalPxpThisLevel': 361, 'quality': 'Legendary', 'prefix': 'Amber', 'slot': 'Helmet', 'type': 'Power',
+          'suffix': 'Protection', 'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 361, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Amber [b][color=#f00]Power[/color][/b] Helmet of Protection', 'seller': 'KingArtson',
+          'link': 'https://hentaiverse.org/isekai/equip/385250/1311a21640'},
+         {'name': 'Legendary Cobalt Plate Helmet of Protection', 'category': 'Heavy',
+          'info': '369, Str 33%, Dex 13%, End 36%, Pmit 12%, Mmit 91%, Crus 76%, Slas 22%, Pier 38%, Burden 55%, Interf 36%',
+          'percentile': {'Str': 33, 'Dex': 13, 'End': 36, 'Pmit': 12, 'Mmit': 91, 'Crus': 76, 'Slas': 22, 'Pier': 38,
+                         'Burden': 55, 'Interf': 36}, 'level': 369, 'tier': 0, 'totalPxpThisLevel': 355,
+          'quality': 'Legendary', 'prefix': 'Cobalt', 'slot': 'Helmet', 'type': 'Plate', 'suffix': 'Protection',
+          'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 355, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Cobalt Plate Helmet of [b]Protection[/b]', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/446375/935b48743a'},
+         {'name': 'Legendary Amber Plate Helmet of Protection', 'category': 'Heavy',
+          'info': '369, Str 12%, Dex 20%, End 18%, Pmit 8%, Mmit 22%, Crus 48%, Slas 33%, Pier 57%, Burden 91%, Interf 55%',
+          'percentile': {'Str': 12, 'Dex': 20, 'End': 18, 'Pmit': 8, 'Mmit': 22, 'Crus': 48, 'Slas': 33, 'Pier': 57,
+                         'Burden': 91, 'Interf': 55}, 'level': 369, 'tier': 0, 'totalPxpThisLevel': 350,
+          'quality': 'Legendary', 'prefix': 'Amber', 'slot': 'Helmet', 'type': 'Plate', 'suffix': 'Protection',
+          'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 350, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Amber Plate Helmet of [b]Protection[/b]', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/442971/81126de900'},
+         {'name': 'Legendary Onyx Power Leggings of Slaughter', 'category': 'Heavy',
+          'info': '369, ADB 42%, Str 73%, Dex 55%, End 42%, Pmit 3%, Mmit 95%, Phy CC 18%, Phy CD 62%, Crus 65%, Slas 33%, Pier 58%, Burden 62%, Interf 0%',
+          'percentile': {'ADB': 42, 'Str': 73, 'Dex': 55, 'End': 42, 'Pmit': 3, 'Mmit': 95, 'Phy CC': 18, 'Phy CD': 62,
+                         'Crus': 65, 'Slas': 33, 'Pier': 58, 'Burden': 62, 'Interf': 0}, 'level': 369, 'tier': 0,
+          'totalPxpThisLevel': 364, 'quality': 'Legendary', 'prefix': 'Onyx', 'slot': 'Leggings', 'type': 'Power',
+          'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 364, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Onyx [b][color=#f00]Power[/color][/b] Leggings of [b][color=#f00]Slaughter[/color][/b]',
+          'seller': 'Pretty anon', 'link': 'https://hentaiverse.org/isekai/equip/462878/a5ed415f82'},
+         {'name': 'Legendary Ruby Plate Sabatons of Protection', 'category': 'Heavy',
+          'info': '362, Str 48%, Dex 68%, End 69%, Pmit 77%, Mmit 46%, Crus 17%, Slas 87%, Pier 94%, Burden 22%, Interf 33%',
+          'percentile': {'Str': 48, 'Dex': 68, 'End': 69, 'Pmit': 77, 'Mmit': 46, 'Crus': 17, 'Slas': 87, 'Pier': 94,
+                         'Burden': 22, 'Interf': 33}, 'level': 362, 'tier': 0, 'totalPxpThisLevel': 364,
+          'quality': 'Legendary', 'prefix': 'Ruby', 'slot': 'Sabatons', 'type': 'Plate', 'suffix': 'Protection',
+          'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 364, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Legendary Ruby Plate Sabatons of [b]Protection[/b]', 'seller': 'estiy',
+          'link': 'https://hentaiverse.org/isekai/equip/373375/a98dd8d9ef'},
+         {'name': 'Magnificent Power Helmet of Slaughter', 'category': 'Heavy',
+          'info': '362, ADB 57%, Str 68%, End 67%, Pmit 35%, Mmit 61%, Phy CC 43%, Phy CD 38%, Crus 0%, Slas 42%, Pier 48%, Burden 81%, Interf 87%',
+          'percentile': {'ADB': 57, 'Str': 68, 'End': 67, 'Pmit': 35, 'Mmit': 61, 'Phy CC': 43, 'Phy CD': 38, 'Crus': 0,
+                         'Slas': 42, 'Pier': 48, 'Burden': 81, 'Interf': 87}, 'level': 362, 'tier': 0,
+          'totalPxpThisLevel': 327, 'quality': 'Magnificent', 'prefix': '', 'slot': 'Helmet', 'type': 'Power',
+          'suffix': 'Slaughter', 'pabs': ['Strength', 'Endurance'], 'pxp0': 327, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b][color=#f00]Power[/color][/b] Helmet of [b][color=#f00]Slaughter[/color][/b]',
+          'seller': 'KingArtson', 'link': 'https://hentaiverse.org/isekai/equip/424991/3bb12f49db'},
+         {'name': 'Magnificent Power Armor of Slaughter', 'category': 'Heavy',
+          'info': '367, ADB 19%, Str 68%, Dex 74%, End 89%, Pmit 26%, Mmit 46%, Phy CC 79%, Phy CD 13%, Crus 15%, Slas 48%, Pier 86%, Burden 72%, Interf 44%',
+          'percentile': {'ADB': 19, 'Str': 68, 'Dex': 74, 'End': 89, 'Pmit': 26, 'Mmit': 46, 'Phy CC': 79, 'Phy CD': 13,
+                         'Crus': 15, 'Slas': 48, 'Pier': 86, 'Burden': 72, 'Interf': 44}, 'level': 367, 'tier': 0,
+          'totalPxpThisLevel': 339, 'quality': 'Magnificent', 'prefix': '', 'slot': 'Armor', 'type': 'Power',
+          'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 339, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b][color=#f00]Power[/color][/b] Armor of [b][color=#f00]Slaughter[/color][/b]',
+          'seller': 'Ming28561', 'link': 'https://hentaiverse.org/isekai/equip/417976/37bf080be7'},
+         {'name': 'Magnificent Savage Power Gauntlets of Protection', 'category': 'Heavy',
+          'info': '344, ADB 44%, Str 59%, Dex 27%, Pmit 92%, Mmit 62%, Phy CC 33%, Phy CD 50%, Crus 21%, Slas 84%, Pier 86%, Burden 6%, Interf 17%',
+          'percentile': {'ADB': 44, 'Str': 59, 'Dex': 27, 'Pmit': 92, 'Mmit': 62, 'Phy CC': 33, 'Phy CD': 50,
+                         'Crus': 21, 'Slas': 84, 'Pier': 86, 'Burden': 6, 'Interf': 17}, 'level': 344, 'tier': 0,
+          'totalPxpThisLevel': 328, 'quality': 'Magnificent', 'prefix': 'Savage', 'slot': 'Gauntlets', 'type': 'Power',
+          'suffix': 'Protection', 'pabs': ['Strength', 'Dexterity'], 'pxp0': 328, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent [b][color=#f00]Savage[/color][/b] [b][color=#f00]Power[/color][/b] Gauntlets of Protection',
+          'seller': 'KingArtson', 'link': 'https://hentaiverse.org/isekai/equip/288869/00c517d4fe'},
+         {'name': 'Magnificent Onyx Power Leggings of Slaughter', 'category': 'Heavy',
+          'info': '367, ADB 34%, Str 5%, Dex 50%, End 87%, Pmit 38%, Mmit 68%, Phy CC 24%, Phy CD 33%, Crus 84%, Slas 89%, Pier 86%, Burden 70%, Interf 87%',
+          'percentile': {'ADB': 34, 'Str': 5, 'Dex': 50, 'End': 87, 'Pmit': 38, 'Mmit': 68, 'Phy CC': 24, 'Phy CD': 33,
+                         'Crus': 84, 'Slas': 89, 'Pier': 86, 'Burden': 70, 'Interf': 87}, 'level': 367, 'tier': 0,
+          'totalPxpThisLevel': 339, 'quality': 'Magnificent', 'prefix': 'Onyx', 'slot': 'Leggings', 'type': 'Power',
+          'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 339, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Onyx [b][color=#f00]Power[/color][/b] Leggings of [b][color=#f00]Slaughter[/color][/b]',
+          'seller': 'estiy', 'link': 'https://hentaiverse.org/isekai/equip/424576/7feee2eb63'},
+         {'name': 'Magnificent Jade Power Boots of Slaughter', 'category': 'Heavy',
+          'info': '333, ADB 94%, Str 46%, Dex 73%, End 93%, Pmit 85%, Mmit 65%, Phy CC 21%, Phy CD 27%, Crus 20%, Slas 36%, Pier 84%, Burden 71%, Interf 59%',
+          'percentile': {'ADB': 94, 'Str': 46, 'Dex': 73, 'End': 93, 'Pmit': 85, 'Mmit': 65, 'Phy CC': 21, 'Phy CD': 27,
+                         'Crus': 20, 'Slas': 36, 'Pier': 84, 'Burden': 71, 'Interf': 59}, 'level': 333, 'tier': 0,
+          'totalPxpThisLevel': 342, 'quality': 'Magnificent', 'prefix': 'Jade', 'slot': 'Boots', 'type': 'Power',
+          'suffix': 'Slaughter', 'pabs': ['Strength', 'Dexterity', 'Endurance'], 'pxp0': 342, 'isObsolete': False,
+          'forging': {'Attack Damage': {'forgeLevel': 0, 'baseMultiplier': 0.0854, 'scalingFactor': 16.666666666666668},
+                      'Magic Damage': {'forgeLevel': 0, 'baseMultiplier': 0.082969,
+                                       'scalingFactor': 22.727272727272727}}, 'butcher': 0, 'swiftStrike': 0,
+          'archmage': 0, 'penetrator': 0, 'maxForging': 0,
+          'bbcode': 'Magnificent Jade [b][color=#f00]Power[/color][/b] Boots of [b][color=#f00]Slaughter[/color][/b]',
+          'seller': 'KingArtson', 'link': 'https://hentaiverse.org/isekai/equip/219498/155ba6e314'}]
 
-[One01] [url=https://hentaiverse.org/isekai/equip/415464/7d29a3b5f2][b][color=#f00]P[/color][color=#f90]e[/color][color=#fc0]e[/color][color=#0c0]r[/color][color=#09f]l[/color][color=#00c]e[/color][color=#c0f]s[/color][color=#f00]s[/color][/b] [b][color=#f00]Ethereal[/color][/b] [b]Wakizashi[/b] of the Nimble[/url] (358, ADB 100%, Parry 100%) (seller:鍙稿緬闆ㄥ仠)[b]youshi1 30.0m [/b]#3
-[One02] [url=https://hentaiverse.org/isekai/equip/252066/f0f7c2979a ]Legendary Demonic [b]Wakizashi[/b] of the Nimble[/url] (313, ADB 52%, Parry 31%) (seller:drgoku)[b]Grandmasters 50.0k [/b]#7
-[One03] [url=https://hentaiverse.org/isekai/equip/70573/5cde3043b3]Legendary [b][color=#f00]Ethereal[/color][/b] [b]Axe[/b] of [b][color=#f00]Slaughter[/color][/b][/url] (289, ADB 10%) (seller:Grandmasters)
-[One04] [url=https://hentaiverse.org/isekai/equip/35732/b1f4c13bc0]Legendary [b][color=#f00]Ethereal[/color][/b] [b]Axe[/b] of [b][color=#f00]Slaughter[/color][/b][/url] (263, ADB 66%) (seller:Grandmasters)
-[One05] [url=https://hentaiverse.org/isekai/equip/390461/28374cd1a3]Magnificent Ethereal Wakizashi of Swiftness[/url] (314, ADB 52%, Parry 4%) (seller:Maharid)
-[One06] [url=https://hentaiverse.org/isekai/equip/123748/df2ab7ee2e]Magnificent Rapier of Slaughter[/url] (300, ADB 43%, Parry 29%) (seller:Maharid)
 
-[size=4][b]Shield[/b][/size]
+def equip_info(info):
+    features = str(info['level'])  # features(前置等级) 准备输出精简属性
+    percentiles = info['percentile']
+    forging = info['forging']
+    number = 0
+    useful_pers = ['ADB', 'Parry', 'BLK', 'MDB', 'EDB', 'Divine EDB', 'Forb EDB', 'Elec EDB', 'Wind EDB', 'Cold EDB',
+                   'Fire EDB', 'Elem Prof']
+    for useful_per in useful_pers:
+        if number < 2:
+            if useful_per in percentiles:
+                features = ''.join([features, ", " + useful_per + " " + str(percentiles[useful_per]) + "%"])
+                number = number + 1
+            if useful_per in forging:
+                features = ''.join([features, ", " + useful_per + " " + str(forging[useful_per]['forgeLevel']) + "%"])
+                number = number + 1
+        else:
+            break
+    return features
 
-[Shd01] [url=https://hentaiverse.org/isekai/equip/363575/e556460095 ]Legendary Mithril Buckler of Protection[/url] (336, BLK 24%) (seller:drgoku)
-[Shd02] [url=https://hentaiverse.org/isekai/equip/330742/af7ec860b7 ]Legendary Agile Buckler of Warding[/url] (329, BLK 81%) (seller:drgoku)
-[Shd03] [url=https://hentaiverse.org/isekai/equip/403042/3fcb50f0cd]Legendary Agile Kite of Warding[/url] (362, BLK 89%) (seller:unikwind)
-[Shd04] [url=https://hentaiverse.org/isekai/equip/264066/8dadc0402a]Magnificent Mithril Buckler of the Nimble[/url] (282, BLK 60%) (seller:Maharid)
 
-[size=4][b]Staff[/b][/size]
+def equip_form():
+    csv_writer = csv.writer(open('equip_info/3_info.csv', 'w', encoding='utf-8-sig', newline=''))
+    equipdate = csv.reader(open('equip_info/3.csv', 'r', encoding='gbk'))
+    a = 0
+    for i in equipdate:
+        print(i)
+        if i[2] =='1':
+            a = b = a + 1
+            if a < 10:
+                b = "0" + str(a)
+            key = ['Mat' + str(b),i[0], i[1],0,0]
+            csv_writer.writerow(key)
+    for i2 in One, Staff, Shield, Cloth, Light, Heavy:
+        a = 0
+        for i in i2:
+            if i["category"] != None:
+                if i["category"] == "1H":
+                    category = "One"
+                elif i["category"] == "2H":
+                    category = "Two"
+                elif i["category"] == "Staff":
+                    category = "Sta"
+                elif i["category"] == "Shield":
+                    category = "Shd"
+                elif i["category"] == "Cloth":
+                    category = "Clo"
+                elif i["category"] == "Light":
+                    category = "Lig"
+                elif i["category"] == "Heavy":
+                    category = "Hea"
+            a = b = a + 1
+            if a < 10:
+                b = "0" + str(a)
+            key = category +str(b)
+            row = [key,i["seller"], i["bbcode"], equip_info(i), i["link"]]
+            csv_writer.writerow(row)
 
-[Sta01] [url=https://hentaiverse.org/isekai/equip/352510/6b376eb9a7 ]Magnificent [b]Fiery[/b] [b]Redwood Staff[/b] of Surtr[/url] (332, MDB 10%, Fire EDB 134%) (seller:drgoku)
 
-[size=4][b]Cloth[/b][/size]
+def add(table, key, seller, name, link, features):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    sql = f"INSERT INTO {table}(ID,SELLER,NAME,LINK,FEATURES) VALUES ('{key}','{seller}','{name}','{link}','{features}')"
+    c.execute(sql)
+    conn.commit()
+    print(f'Record {key},{seller},{name},{features} created successfully')
+    conn.close()
 
-[Clo01] [url=https://hentaiverse.org/isekai/equip/352871/ee822818d5 ]Magnificent [b][color=#f90]Frugal[/color][/b] [b]Phase[/b] Pants of Mjolnir[/url] (333, Elec EDB 61%) (seller:drgoku)[b]sabregimp 50.0k [/b]#9
 
-[size=4][b]Light[/b][/size]
+def database():
+    equipdate = csv.reader(open('equip_info/2_info3.csv', 'r', encoding='utf-8-sig'))
+    for i in equipdate:
+        # def add(table,key,seller,name,link,features):
+        if i[3] != '' and i[3] != 'link' and i[3] != 'mat':
+            print(i[1] + i[0] + i[2] + i[3] + i[4])
+            add('ISK002', i[1], i[0], i[2], i[3], i[4])
+        if i[3] == '':
+            print(i[1] + i[0] + i[2])
+            add('ISK002', i[1], i[0], i[2], '0', '0')
 
-[Lig01] [url=https://hentaiverse.org/isekai/equip/376290/eee2670cc8]Legendary [b][color=#f00]Savage[/color][/b] [b]Shade[/b] Breastplate of Fleet[/url] (358, ADB 8%) (seller:unikwind)[b]sabregimp 50.0k [/b]#9
-[Lig02] [url=https://hentaiverse.org/isekai/equip/389576/7124e17975]Legendary [b][color=#f00]Savage[/color][/b] [b]Shade[/b] Boots of Negation[/url] (333, ADB 17%) (seller:SleepDealer)
 
-[size=4][b]Heavy[/b][/size]
-
-[Hea01] [url=https://hentaiverse.org/isekai/equip/274856/aacddffb28]Legendary Jade [b][color=#f00]Power[/color][/b] Helmet of [b][color=#f00]Slaughter[/color][/b][/url] (344, ADB 42%) (seller:Pretty anon)[b]-The Dashing Dash- 500.0k [/b]#8
-[Hea02] [url=https://hentaiverse.org/isekai/equip/394853/44798ffb9c]Legendary Amber [b][color=#f00]Power[/color][/b] Gauntlets of Warding[/url] (315, ADB 46%) (seller:Maharid)[b]SleepDealer 200.0k [/b]#5
-[Hea03] [url=https://hentaiverse.org/isekai/equip/394893/8a8bbb8970]Legendary Cobalt Plate Helmet of [b]Protection[/b][/url] (315) (seller:Maharid)
-[Hea04] [url=https://hentaiverse.org/isekai/equip/415768/e139d8525c]Legendary Ruby Plate Sabatons of Warding[/url] (319) (seller:Maharid)
-[Hea05] [url=https://hentaiverse.org/isekai/equip/254257/ed8a15de39 ]Legendary Onyx Plate Greaves of Warding[/url] (315) (seller:drgoku)
-[Hea06] [url=https://hentaiverse.org/isekai/equip/21818/4f04729b7a ]Legendary Mithril Plate Sabatons of Warding[/url] (210) (seller:drgoku)
-[Hea07] [url=https://hentaiverse.org/isekai/equip/415418/76ebf8c39c]Magnificent [b][color=#f00]Power[/color][/b] Gauntlets of [b][color=#f00]Slaughter[/color][/b][/url] (364, ADB 24%) (seller:chjj30)[b]zero1018101 50.0k [/b]#11
-[Hea08] [url=https://hentaiverse.org/isekai/equip/379853/4a1a1eae87]Magnificent Cobalt [b][color=#f00]Power[/color][/b] Leggings of Protection[/url] (363, ADB 30%) (seller:Ming28561)
-[Hea09] [url=https://hentaiverse.org/isekai/equip/378322/ed0e3a0787]Magnificent Zircon [b][color=#f00]Power[/color][/b] Helmet of Protection[/url] (311, ADB 2%) (seller:Maharid)
-[Hea10] [url=https://hentaiverse.org/isekai/equip/22389/a117e0d2f0 ]Magnificent Jade [b][color=#f00]Power[/color][/b] Gauntlets of Protection[/url] (213, ADB 28%) (seller:drgoku)
-[Hea11] [url=https://hentaiverse.org/isekai/equip/382930/6da44f57ed ]Magnificent [b][color=#f00]Power[/color][/b] Leggings of Warding[/url] (336, ADB 83%) (seller:drgoku)
-[Hea12] [url=https://hentaiverse.org/isekai/equip/324171/ed06d9abb7 ]Magnificent [b][color=#f00]Power[/color][/b] Gauntlets of Protection[/url] (327, ADB 90%) (seller:drgoku)
-[Hea13] [url=https://hentaiverse.org/isekai/equip/394890/ca833ae0d8]Magnificent Mithril [b][color=#f00]Power[/color][/b] Armor of Protection[/url] (315, ADB 28%) (seller:Maharid)
-'''
-#print(api.auto_edit(90, 246614, 5879663, bbcode))
-#print(bbcode)
+equip_form()

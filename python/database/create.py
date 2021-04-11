@@ -5,7 +5,7 @@ conn = sqlite3.connect('auction.db')
 print("Opened database successfully")
 c = conn.cursor()
 c.execute('''
-CREATE TABLE ISK002
+CREATE TABLE ISK004
        (ID TEXT PRIMARY KEY     NOT NULL,
        SELLER           TEXT    NOT NULL,
        NAME            TEXT     NOT NULL,
