@@ -5,13 +5,8 @@ config = ConfigParser()
 info = config.read('config.ini',encoding='UTF-8')
 EHLOGINURL = "https://forums.e-hentai.org/index.php?act=Login&CODE=01"
 EHCREDENTIALS = {
-<<<<<<< Updated upstream
-    "UserName": "",
-    "PassWord": "",
-=======
     "UserName": info['Account']['account'],
     "PassWord": info['Account']['password'],
->>>>>>> Stashed changes
     "CookieDate": 1
 }
 HVLOGINURL = "http://alt.hentaiverse.org/login?ipb_member_id=#####&ipb_pass_hash=########"
