@@ -26,11 +26,12 @@ def price_conver(price):
 def update_price(auctionTopicID, auctionDbTable):
     replies_all = api.forum_replies(auctionTopicID)
     bids_all = replies_all['data']
-    latestID= "#2"
+    print(bids_all)
+    latestID= "#1"
     for post in bids_all:
         if not post['isEdited']:
             ID = post['postId']
-            if ID == '#1' or ID == '#25':
+            if ID == '#1' or ID == '#2':
                 continue
             user = post['username']
             bids = post['bid']
@@ -42,7 +43,7 @@ def update_price(auctionTopicID, auctionDbTable):
                     price_now = str(bids[bid])
                     price_now = price_conver(price_now)
                     # print(price_now)
-                    winner, price = db.search_byid('ISK002', bid.capitalize())
+                    winner, price = db.search_byid('ISK003', bid.capitalize())
                     if price:
                         price = price_conver(price)
                         #print(price)
@@ -54,45 +55,59 @@ def update_price(auctionTopicID, auctionDbTable):
                         db.update(auctionDbTable, bid.capitalize(), 'PRICE', price_now)
                         db.update(auctionDbTable, bid.capitalize(), 'Winner', user)
                         db.update(auctionDbTable, bid.capitalize(), 'LOG', postId)
-                    # out = f'{user}在{ID}中{bid}出价{price},数据库中{winner}{price}{postId}'
-                    # print(out)
+                     # out = f'{user}在{ID}中{bid}出价{price},数据库中{winner}{price}{postId}'
+                     # print(out)
             latestID = ID
     print(f'数据库更新成功{latestID}')
     return latestID
 def main():
-    title = "[Auction]Xuan's Auction #2"
-    update_info = "Update to " + update_price(246614, 'ISK002') +" | "+time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+    title = "[Auction]Xuan's Auction #3"
+   #update_info = "Update to " + update_price(246974, 'ISK003') +" | "+time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+    update_info = "Update to " + update_price(246974, 'ISK003') +" | Ended"
     content_1 ='''
-    [center][img]https://reasoningtheory.net/countdown.png?title=Xuan'Auction&year=2021&month=3&day=21&hour=14&minute=0&expire=[/img][/center]
-    [center][color=#33FF33][size=5]Only For Persistent Credits[/size][/color][/center]
+[center][img]http://skeimg.com/i/2021/04/03/zigcqn.png[/img]
+[img]https://pure-svg-countdown.skk.moe/timer?title=Xuan%27s%20Auction%203&finish=Ended&time=2021-04-04T16:00:00.000Z#.gif[/img][/center]
+[center][color=#33FF33][size=5]Only For Persistent Credits[/size][/color][/center]
+
+
+[size=3][list]
+[*]The expected functions in the auction have been basically realized, but they are still [b]under test[/b] and will be launched one after another.
+[*]Thanks to [b]OnceForAll[/b] for making a new timer.
+[*]And [b]paperplane07[/b] made the LOGO.
+[/list][/size]
+
+[color=#006600]Automatic price updates will now occur every 15 minutes.[/color]
+     
     
-    [color=#006600]Automatic price updates will now occur every 15 minutes.
-    [b]OnceForAll[/b] makes an important contribution to the entire auction program.[/color]
+[size=3][b]Auction Rules and Features:[/b][/size]
     
-    [size=3][b]Auction Rules and Features:[/b][/size]
-    
-    All posted bids should be in president credits in multiples of 1k and must immediately follow the item code or codes. Codes must match what's displayed in the auction; 5 characters, no spaces.[list]
-    [*]One01 200k is valid.
-    [*][One02] 1.5m is valid.
-    [*]One04 start is valid.
-    [*]One05 I will bid 400k is invalid.
-    [/list][size=3][b]Minimum bid increments:[/b][/size][list]
-    [*]Start/Minimum bid: 50k
-    [*]Add at least 50k each time
-    [/list]If you want me to auction an item for you, feel free to send stuff any time.
+All posted bids should be in president credits in multiples of 1k and must immediately follow the item code or codes. Codes must match what's displayed in the auction; 5 characters, no spaces.[list]
+[*]One01 200k is valid.
+[*][One02] 1.5m is valid.  
+[*]One04 start is valid.  
+[*]One05 I will bid 400k is invalid.
+[/list]
+
+[size=3][b]Minimum bid increments:[/b][/size]
+[list]
+[*]Start/Minimum bid: 50k 
+[*]Add at least 50k each time
+If you want me to auction an item for you, feel free to send stuff any time.
     And the subject must be "For Auction",thanks.
     There are no fees, see this post for details.
-    
-    [color=#FF0000][size=3][b]Warning:[/b][/size][/color][list]
-    [*]Editing of posts before updated will make the bid invalid!
-    [*]Never post anything but bids, If there is an error, please try to PM Grandmasters.
-    [/list]'''
-    edit_post = api.full_edit(90, 246614, 5879662, title, content=content_1, description=update_info)
+[/list]
 
-    bbcode1 = f"[size=3][b]{update_info}[/b][/size]\n\n" + str(db.BBCode('ISK002'))
+[color=#FF0000][size=3][b]Warning:[/b][/size][/color]
+[list]
+[*]Editing of posts before updated will make the bid invalid!
+[*]Never post anything but bids, If there is an error, please try to PM Grandmasters.
+[/list]
+    '''
+    edit_post = api.full_edit(90, 246974, 5887224, title, content=content_1, description=update_info)
 
-    edit_post = api.full_edit(90, 246614, 5879663, title, content=bbcode1, description=update_info)
-
+    bbcode1 = f"[size=3][b]{update_info}[/b][/size]\n\n" + str(db.BBCode('ISK003'))
+    #print(bbcode1)
+    edit_post = api.full_edit(90, 246974, 5887225, title, content=bbcode1, description=update_info)
     post_result = json.loads(edit_post)
     if post_result['data'] != 'error':
         print(f"论坛数据更新成功{update_info}")
