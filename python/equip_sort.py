@@ -1,9 +1,12 @@
 import requests
 import csv
 import sqlite3
+import json
 from operator import itemgetter, attrgetter
 
 SERVER = 'http://hk.sukeycz.com:3001'
+db_name = r'D:\Github\hvAuction\python\package\auction.db'
+Mat, One, Two, Sta, Shd, Clo, Lig, Hea = [], [], [], [], [], [], [], []
 
 
 def equip_allinfo(link):
@@ -11,22 +14,51 @@ def equip_allinfo(link):
     response = requests.get(url)
     return response.json()
 
-One, Two, Staff, Shield, Cloth, Light, Heavy = [], [], [], [], [], [], []
-
-def equip_in(info,seller,link):
-    if info["category"] != None:
-        if info["category"] == "1H":
-            category = "One"
-        elif info["category"] == "2H":
-            category = "Two"
+def smallinfo(link):
+    allinfo = equip_allinfo(link)
+    features = str(allinfo['data']['level'])  # features(前置等级) 准备输出精简属性
+    percentiles = allinfo['data']['percentile']
+    forging = allinfo['data']['forging']
+    name = allinfo['data']['name']
+    number = 0
+    useful_pers = ['ADB', 'Parry', 'BLK', 'MDB', 'EDB', 'Divine EDB', 'Forb EDB', 'Elec EDB', 'Wind EDB',
+                   'Cold EDB',
+                   'Fire EDB', 'Elem Prof']
+    # if name.find('')
+    for useful_per in useful_pers:
+        if number < 2:
+            if useful_per in percentiles:
+                features = ''.join([features, ", " + useful_per + " " + str(percentiles[useful_per]) + "%"])
+                number = number + 1
+            if useful_per in forging:
+                features = ''.join(
+                    [features, ", " + useful_per + " " + str(forging[useful_per]['forgeLevel']) + "%"])
+                number = number + 1
         else:
-            category = info["category"]
+            break
+    return features
+
+def category_to_three(category):
+    if category != None:# FIXME IF NONE HOW
+        if category == "1H":
+            category = "One"
+        elif category == "2H":
+            category = "Two"
+        elif category == "Shield":
+            category = "Shd"
+        else:
+            category = category[:3]
+    return category
+
+def equip_in(info, seller, link):
+    category = category_to_three(info["category"])
     info["seller"] = seller
     info["link"] = link
+    info["info_small"] = smallinfo(link)
+    info["category_3"] = category
     eval(f'{category}.append({info})')  # 对每个装备进行大分类归档
 
-SERVER = 'http://hk.sukeycz.com:3001'
-db_name = r'D:\Github\hvAuction\python\database\auction.db'
+
 def add(table, key, seller, name, link, features):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
@@ -35,16 +67,6 @@ def add(table, key, seller, name, link, features):
     conn.commit()
     print(f'Record {key},{seller},{name},{features} created successfully')
     conn.close()
-equipdate = csv.reader(open('equip_info/4.csv', 'r', encoding='utf-8-sig'))
-for i in equipdate:
-    if i[2] == '1':
-        a = equip_allinfo(i[1])["data"]
-        # print(a)
-        if a != None:
-            equip_in(a,i[0],i[1])
-    elif i[2] == '0':
-        print(i[1] + i[0] + i[2])
-        add('ISK004', i[0], i[1], i[2], '0', '0')
 
 
 def weight(equip):
@@ -156,15 +178,39 @@ def weight(equip):
         "Warding": 8,
         "": 10
     }
-    weig = sort_quality[equip["quality"]] * 10000 + sort_slot[equip["slot"]] * 1000 + sort_type[equip["type"]]*100+sort_prefix[equip["prefix"]]*10+sort_suffix [equip["suffix"]]
+    weig = sort_quality[equip["quality"]] * 10000 + sort_slot[equip["slot"]] * 1000 + sort_type[equip["type"]] * 100 + \
+           sort_prefix[equip["prefix"]] * 10 + sort_suffix[equip["suffix"]]
     return weig
 
-for equip_set in One, Two, Staff, Shield, Cloth, Light, Heavy:
-    equip_set = sorted(equip_set, key=lambda equip: weight(equip))
-    print(equip_set)
-    for i in equip_set:
-        # def add(table,key,seller,name,link,features):
-        add('ISK004', i[0], i[1], i[2], i[4], i[3])
 
 
+if __name__ == '__main__':
+    equipdate = csv.reader(open('equip_info/4.csv', 'r', encoding='utf-8-sig'))
+    mat_count = 0
+    for i in equipdate:
+        if str(i[3]) == '1':
+            mat_count += 1
+            if mat_count <= 9:
+                mat_count_str = f'0{mat_count}'
+            else:
+                mat_count_str = mat_count
+            add('ISK004', f'Mat{mat_count_str}', i[0], i[1],'0','0')
+            print(f'Mat{mat_count_str}', i[0], i[1])
+        else:
+            a = equip_allinfo(i[1])["data"]
+            if a != None:
+                equip_in(a, i[0], i[1])
 
+    for equip_set in One, Two, Sta, Shd, Clo, Lig, Hea:
+        equip_set = sorted(equip_set, key=lambda equip: weight(equip))
+        print(equip_set)
+        count = 0
+        for i in equip_set:
+            count += 1
+            if count <= 9:
+                count_str = f'0{count}'
+            else:
+                count_str = count
+            # def add(table,key,seller,name,link,features):
+            add('ISK004', f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info_small"])
+            print(f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info"])

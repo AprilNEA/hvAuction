@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-import json
-import requests
 import sqlite3
-import urllib
-from datetime import datetime
-import time
-from hvapi import HVAPI
-from databasesq3 import DATABASE
+from python.package.hvapi import HVAPI
 
 api = HVAPI(r'http://hk.sukeycz.com:3001')
 db_name = r'D:\Github\hvAuction\python\database\auction.db'
