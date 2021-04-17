@@ -7,7 +7,7 @@ import { quickEditPost } from './thread';
 import cors from 'cors';
 import { requestCredential } from './lib/middleware/requestEhCredential';
 import { fullEditPost } from './lib/editPost/full_edit';
-import { getMoogleMailList } from './mooglemail';
+import { getMoogleMailList, parseMoogleMail } from './mooglemail';
 
 dotenv.config();
 
@@ -53,6 +53,11 @@ dotenv.config();
   // @example /hv/mooglemail/list
   // @example /hv/mooglemail/list?isekai=1
   app.get('/hv/mooglemail/list*', requestCredential, getMoogleMailList);
+
+  // Fetch hentaiverse mooglemail list
+  // @example /hv/mooglemail/mail/1919810
+  // @example /hv/mooglemail/mail/114514?isekai=1
+  app.get('/hv/mooglemail/mail/:mid', requestCredential, parseMoogleMail);
 
   app.listen(port, () => {
     log.info('[Main]', `API Server listening at http://localhost:${port}`);
