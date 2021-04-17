@@ -482,9 +482,7 @@ function generateBBCode(equipInfo: ReturnType<typeof parseEquipmentFromDocument>
   if (/Oak|Redwood|Willow|Katalox|Ebony/.test(type.code || '')) type.code += ' Staff';
   [quality, prefix, slot, suffix, type].forEach(i => {
     if (i.color) {
-      if (i.code !== '') {
-        i.code = `[b][color=${i.color}]${i.code}[/color][/b]`;
-      }
+      i.code = `[b][color=${i.color}]${i.code}[/color][/b]`;
     } else if (i.bold) {
       i.code = `[b]${i.code}[/b]`;
     }
@@ -493,8 +491,8 @@ function generateBBCode(equipInfo: ReturnType<typeof parseEquipmentFromDocument>
 
   all.code = all.code || `${quality.code + (prefix.code ? ` ${prefix.code}` : '')} ${type.code}${slot.code ? ` ${slot.code}` : ''}${suffix.code ? ` of ${suffix.code}` : ''}`;
 
-  if (all.color && all.code !== '') { all.code = `[color=${all.color}]${all.code}[/color]`; }
-  if (all.bold && all.code !== '') { all.code = `[b]${all.code}[/b]`; }
+  if (all.color) { all.code = `[color=${all.color}]${all.code}[/color]`; }
+  if (all.bold) { all.code = `[b]${all.code}[/b]`; }
 
   return all.code;
 }
