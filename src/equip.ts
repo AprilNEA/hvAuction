@@ -51,11 +51,11 @@ export async function fetchEquipmentInfo(req: express.Request, res: express.Resp
     } catch (e) {
       res.status(401).send({
         code: 1,
-        msg: 'Something went wrong when fetching & parse replies',
+        msg: 'Something went wrong when fetching & parse equipment',
         data: null
       }).end();
 
-      log.error(e);
+      log.error('[Equipment]', e);
     }
     return;
   }
