@@ -7,13 +7,13 @@ const cache = new Cache({
   stdTTL: 60
 });
 
-export async function getPage(url: string, options?: OptionsOfTextResponseBody): Promise<string | undefined> {
+export async function getPage(url: string, options?: OptionsOfTextResponseBody, ttl?: number): Promise<string | undefined> {
   if (cache.has(url)) {
-    log.info(`Reading Page from Cache: ${url}`);
+    log.info('[Main]', `Reading Page from Cache: ${url}`);
     return cache.get(url);
   }
 
-  log.info(`Fetching Page: ${url}`);
+  log.info('[Main]', `Sending network request to: ${url}`);
 
   const { body, statusCode } = await got(url, {
     retry: { limit: 2 },
@@ -24,7 +24,11 @@ export async function getPage(url: string, options?: OptionsOfTextResponseBody):
   });
 
   if (statusCode >= 200 && statusCode < 300 || statusCode === 304) {
-    cache.set(url, body);
+    if (ttl) {
+      cache.set(url, body, ttl);
+    } else {
+      cache.set(url, body);
+    }
   }
 
   return body;
