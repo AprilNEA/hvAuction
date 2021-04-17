@@ -365,7 +365,7 @@ function generateBBCode(equipInfo: ReturnType<typeof parseEquipmentFromDocument>
   const suffix: BBCodeSnippetType = { code: equipInfo?.suffix };
 
   if (equipInfo?.category === '1H') {
-    if (equipInfo?.name.includes('Rapier') && equipInfo.suffix === 'suffix') {
+    if (equipInfo?.name.includes('Rapier') && equipInfo.suffix === 'Slaughter') {
       if (equipInfo.prefix === 'Ethereal' || equipInfo.prefix === 'Hallowed' || equipInfo.prefix === 'Demonic') {
         prefix.color = color1;
         type.bold = true;
@@ -486,7 +486,9 @@ function generateBBCode(equipInfo: ReturnType<typeof parseEquipmentFromDocument>
         i.code = `[b][color=${i.color}]${i.code}[/color][/b]`;
       }
     } else if (i.bold) {
-      i.code = `[b]${i.code}[/b]`;
+      if (i.code !== '') {
+        i.code = `[b]${i.code}[/b]`;
+      }
     }
     if (i.the) i.code = `the ${i.code}`;
   });
