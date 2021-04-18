@@ -7,6 +7,7 @@ import { quickEditPost } from './thread';
 import cors from 'cors';
 import { requestCredential } from './lib/middleware/requestEhCredential';
 import { fullEditPost } from './lib/editPost/full_edit';
+import { getMoogleMailList, parseMoogleMail } from './mooglemail';
 
 dotenv.config();
 
@@ -14,7 +15,9 @@ dotenv.config();
   const log = hexoLogger();
 
   const app = express();
-  const port = 3001;
+
+  const { hv_api_port: hvApiPort } = process.env;
+  const port = isNaN(Number(hvApiPort)) ? 3001 : Number(hvApiPort);
 
   app.use(express.json({
     limit: '2mb'
@@ -46,7 +49,17 @@ dotenv.config();
   // @example /hv/equip/?url=https://hentaiverse.org/equip/268468677/df59bf55b2
   app.get('/hv/equip/*', requestCredential, fetchEquipmentInfo);
 
+  // Fetch hentaiverse mooglemail list
+  // @example /hv/mooglemail/list
+  // @example /hv/mooglemail/list?isekai=1
+  app.get('/hv/mooglemail/list*', requestCredential, getMoogleMailList);
+
+  // Fetch hentaiverse mooglemail list
+  // @example /hv/mooglemail/mail/1919810
+  // @example /hv/mooglemail/mail/114514?isekai=1
+  app.get('/hv/mooglemail/mail/:mid', requestCredential, parseMoogleMail);
+
   app.listen(port, () => {
-    log.info(`API Server listening at http://localhost:${port}`);
+    log.info('[Main]', `API Server listening at http://localhost:${port}`);
   });
 })();
