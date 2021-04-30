@@ -3,7 +3,7 @@ import sqlite3
 from python.package.hvapi import HVAPI
 
 api = HVAPI(r'http://hk.sukeycz.com:3001')
-db_name = r'D:\Github\hvAuction\python\database\auction.db'
+db_name = r'D:\Github\hvAuction\python\package\auction.db'
 
 
 def price_conver_2(price):
@@ -15,12 +15,12 @@ def price_conver_2(price):
     return price_2
 
 
-table = 'ISK003'
+table = 'ISK004'
 conn = sqlite3.connect(db_name)
 c = conn.cursor()
 winner = 0
 price = 0
-cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,PRICE,WINNER from {table}")
+cursor = c.execute(f"SELECT ID,SELLER,NAME,LINK,PRICE,WINNER from ISK004")
 seller = {}
 buyer = {}
 buyer_2 = {}
