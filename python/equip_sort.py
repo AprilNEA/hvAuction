@@ -6,6 +6,7 @@ from operator import itemgetter, attrgetter
 
 SERVER = 'http://hk.sukeycz.com:3001'
 db_name = r'D:\Github\hvAuction\python\package\auction.db'
+
 Mat, One, Two, Sta, Shd, Clo, Lig, Hea = [], [], [], [], [], [], [], []
 
 
@@ -13,6 +14,7 @@ def equip_allinfo(link):
     url = f'{SERVER}/hv/equip/?url={link}'
     response = requests.get(url)
     return response.json()
+
 
 def smallinfo(link):
     allinfo = equip_allinfo(link)
@@ -24,7 +26,7 @@ def smallinfo(link):
     useful_pers = ['ADB', 'Parry', 'BLK', 'MDB', 'EDB', 'Divine EDB', 'Forb EDB', 'Elec EDB', 'Wind EDB',
                    'Cold EDB',
                    'Fire EDB', 'Elem Prof']
-    # if name.find('')
+
     for useful_per in useful_pers:
         if number < 2:
             if useful_per in percentiles:
@@ -38,8 +40,9 @@ def smallinfo(link):
             break
     return features
 
+# 将武器分类缩写成三个字符
 def category_to_three(category):
-    if category != None:# FIXME IF NONE HOW
+    if category != None:  # FIXME IF NONE HOW
         if category == "1H":
             category = "One"
         elif category == "2H":
@@ -50,13 +53,14 @@ def category_to_three(category):
             category = category[:3]
     return category
 
+# 对每个装备进行大分类归档
 def equip_in(info, seller, link):
     category = category_to_three(info["category"])
     info["seller"] = seller
     info["link"] = link
     info["info_small"] = smallinfo(link)
     info["category_3"] = category
-    eval(f'{category}.append({info})')  # 对每个装备进行大分类归档
+    eval(f'{category}.append({info})')
 
 
 def add(table, key, seller, name, link, features):
@@ -183,9 +187,11 @@ def weight(equip):
     return weig
 
 
-
 if __name__ == '__main__':
-    equipdate = csv.reader(open('equip_info/4.csv', 'r', encoding='utf-8-sig'))
+    # csv: seller url if_mat
+    equipdate = csv.reader(open('data/equip_info/4.csv', 'r', encoding='utf-8-sig'))
+
+    # 对材料进行特殊处理
     mat_count = 0
     for i in equipdate:
         if str(i[3]) == '1':
@@ -194,7 +200,7 @@ if __name__ == '__main__':
                 mat_count_str = f'0{mat_count}'
             else:
                 mat_count_str = mat_count
-            add('ISK004', f'Mat{mat_count_str}', i[0], i[1],'0','0')
+            add('ISK004', f'Mat{mat_count_str}', i[0], i[1], '0', '0')
             print(f'Mat{mat_count_str}', i[0], i[1])
         else:
             a = equip_allinfo(i[1])["data"]
