@@ -4,8 +4,9 @@ import time
 from python.package.hvapi import HVAPI
 from python.package.databasesq3 import DATABASE
 
-api = HVAPI(r'http://hk.sukeycz.com:3001')
-db = DATABASE(r'D:\Github\hvAuction\python\package\auction.db')
+config = json.load(open('config.json'))
+api = config['api_server']
+db = config['database']
 
 
 def price_abb_conver(price):
@@ -22,13 +23,14 @@ def price_abb_conver(price):
 
 
 def update_price(latestID, auctionTopicID, auctionDbTable):
-    replies_all = api.forum_replies(auctionTopicID)  # 通过API获取论坛回复
+    replies_all = api.forum_replies(auctionTopicID)
     bids_all = replies_all['data']
     # print(bids_all)
 
     for post in bids_all:
         if not post['isEdited']:
             ID = int(post['postId'][1:])
+
             if ID <= int(latestID[1:]):  # 跳过已更新过的帖子
                 continue
             user = post['username']
