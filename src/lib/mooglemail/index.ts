@@ -117,7 +117,7 @@ export async function parseSingleMoogleMail(isIsekai = false, mid: string): Prom
     $mailAttachments.each((i, el) => {
       const name = $(el).text().trim();
       const onmouseover = $(el).attr('onmouseover');
-      const isItem = onmouseover?.includes('itemc_box');
+      const isItem = onmouseover?.includes('show_item');
 
       if (isItem) {
         ((results.attachments = results.attachments || {}).items = results.attachments.items || []).push(name);
