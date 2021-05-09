@@ -1,10 +1,27 @@
+from .hvapi import HVAPI
 import sqlite3
-from hvapi import HVAPI
+
 api = HVAPI(r'http://hk.sukeycz.com:3001')
 
 class DATABASE:
     def __init__(self, db_name):
         self.db_name = db_name
+
+    def table_check(self):
+        conn = sqlite3.connect(self.db_name)
+        try:
+            create_tb_cmd = r'''
+                '''
+            # 主要就是上面的语句
+            conn.execute(create_tb_cmd)
+        except:
+            print("Create table failed")
+            return False
+        insert_dt_cmd = ''''''
+        conn.execute(insert_dt_cmd)
+        conn.commit()
+        conn.close()
+
 
     def read(self, table, id):
         conn = sqlite3.connect(self.db_name)
@@ -89,7 +106,7 @@ class DATABASE:
                     out = out + f'[{row[0]}] {row[2]} (seller:{row[1]})\n'
                 else:
                     bbcode = api.equip_allinfo(row[3])["data"]["bbcode"]
-                    if row[0] == "Clo02":
+                    if row[0] == "None":
                         out = out + f'[s][{row[0]}] [url={row[3]}]{bbcode}[/url] ({row[4]}) (seller:{row[1]})[/s]\n'
                     else:
                     #out = out + f'[{row[0]}] [url={row[3]}]{row[2]}[/url] ({row[4]}) (seller:{row[1]})\n'
@@ -98,3 +115,17 @@ class DATABASE:
         conn.close()
 
         return out
+
+    # 拍卖数据入库
+
+    def add(self,table, key, seller, name, link, features):
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+        sql = f"INSERT INTO {table}(ID,SELLER,NAME,LINK,FEATURES) VALUES ('{key}','{seller}','{name}','{link}','{features}')"
+        c.execute(sql)
+        conn.commit()
+        print(f'Record {key},{seller},{name},{features} created successfully')
+        conn.close()
+
+class EquipDeal():
+    pass
