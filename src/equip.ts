@@ -1,14 +1,11 @@
 import { getPage } from './util/network';
 import { parseEquipmentFromDocument } from './lib/equip/parser';
 import hexoLogger from 'hexo-log';
-import Cache from 'node-cache';
 
 import express from 'express';
 
 const log = hexoLogger();
-const cache = new Cache({
-  stdTTL: 43200
-});
+const cache = new Map();
 
 export async function fetchEquipmentInfo(req: express.Request, res: express.Response): Promise<void> {
   if (req.query && req.query.url && typeof req.query.url === 'string') {

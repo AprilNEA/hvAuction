@@ -92,7 +92,8 @@ export function lexer(str: string): LexToken[] {
       && (
         char === 'm' && str[i + 1] === 'a' && str[i + 2] === 't' // mat
         || char === 'o' && str[i + 1] === 'n' && str[i + 2] === 'e' // one
-        || char === 't' && str[i + 1] === 'w' && str[i + 2] === 'o' // sto
+        || char === 't' && str[i + 1] === 'w' && str[i + 2] === 'o' // two
+        || char === 's' && str[i + 1] === 'h' && str[i + 2] === 'd' // shd
         || char === 's' && str[i + 1] === 't' && str[i + 2] === 'a' // sta
         || char === 'c' && str[i + 1] === 'l' && str[i + 2] === 'o' // clo
         || char === 'l' && str[i + 1] === 'i' && str[i + 2] === 'g' // lig

@@ -11,8 +11,7 @@
     "express": "^4.17.1",
     "form-data": "^4.0.0",
     "got": "^11.8.2",
-    "hexo-log": "^2.0.0",
-    "node-cache": "^5.1.2"
+    "hexo-log": "^2.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.15",
