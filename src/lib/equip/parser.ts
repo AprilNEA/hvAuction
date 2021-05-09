@@ -480,6 +480,8 @@ function generateBBCode(equipInfo: ReturnType<typeof parseEquipmentFromDocument>
 
   if (/Nimble|Heaven-sent|Demon-fiend|Elementalist|Battlecaster|Barrier|Shadowdancer/.test(equipInfo?.suffix || '')) suffix.the = true;
   if (/Oak|Redwood|Willow|Katalox|Ebony/.test(type.code || '')) type.code += ' Staff';
+  if (/Kite|Force|Tower/.test(type.code || '') && !type.code?.includes('Shield')) type.code += ' Shield';
+
   [quality, prefix, slot, suffix, type].forEach(i => {
     if (i.color) {
       i.code = `[b][color=${i.color}]${i.code}[/color][/b]`;
