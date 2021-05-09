@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+from package.hvapi import *
+from package.databasesq3 import *
 import json
 import time
-from python.package.hvapi import HVAPI
-from python.package.databasesq3 import DATABASE
+
 
 config = json.load(open('config.json'))
-api = config['api_server']
-db = config['database']
-
+api = HVAPI(config['api_server'])
+db = DATABASE(config['database'])
+AUCTION_ID = 'ISK005'
 
 def price_abb_conver(price):
     price = str(price).lower()
@@ -39,17 +40,19 @@ def update_price(latestID, auctionTopicID, auctionDbTable):
 
             for bid_key in bids:
                 # bid为物品序号(mat01)
-                # FIXME 大小写
                 if bid_key:
+
                     print(bids)
                     price_new = price_abb_conver(bids[bid_key])  # 确保出价缩写被转换成数字
-                    winner, price_current = db.search_byid('ISK004', bid_key)  # 查询此物品的当前拥有者和出价，
+
                     bid_key = bid_key.capitalize()  # 将拍卖序号确保首字母大写后查询(Mat01)
+                    winner, price_current = db.search_byid(AUCTION_ID, bid_key)  # 查询此物品的当前拥有者和出价，
+
                     # price_new为最新出价，price_current为数据库中当前出价
                     # TODO 已数字的形式在数据库中存储价格而非带价格缩写的字符串
                     if price_current:
                         price_current = price_abb_conver(price_current)
-                    # TODO 简化数据库更新语句
+
                     if not price_current or price_current == 'None':
                         db.update(auctionDbTable, bid_key, 'PRICE', price_new)
                         db.update(auctionDbTable, bid_key, 'Winner', user)
@@ -71,25 +74,26 @@ def main():
     start_time = 1618607206
     end_time = 1618718400
     auction_id = '4'
-    auctionDbTable = 'ISK004'
-    topic_id = 247345
-    post_n1 = 5893951
-    post_n2 = 5893952
+    auctionDbTable = AUCTION_ID
+    topic_id = 247885
+    post_n1 = 5905753
+    post_n2 = 5905754
     ###———————###
     lastestID = '#2'
-    title = f"[Auction]Xuan's Auction #{auction_id}"
+    title = f"[TEST] Xuan's Auction #5" #[Auction]Xuan's Auction #{auction_id}"
     update_info = "Update to " + update_price(lastestID, topic_id, auctionDbTable) +" | "+time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
     # update_info = "Update to " + update_price(topic_id, datebaseID) + " | Ended"  # 拍卖进展信息
 
     # 第一帖信息：时间，规则，banlist，forbiddenlist
     content_1 = open("bbcode/isekai_auction_n1.txt",).read()
-    edit_post_n1 = api.full_edit(forum=90, id=topic_id, postId=post_n1, title=title, content=content_1,
+    edit_post_n1 = api.full_edit(forum=4, id=topic_id, postId=post_n1, title=title, content=content_1,
                                  description=update_info)
     post_result_n1 = json.loads(edit_post_n1)
-    print(str(db.BBCode('ISK004')))
+    print(str(db.BBCode(AUCTION_ID)))
+
     # 第二贴信息：拍卖数据
-    bbcode1 = f"[size=3][b]{update_info}[/b][/size]\n\n" + str(db.BBCode('ISK004'))
-    edit_post_n2 = api.full_edit(90, topic_id, post_n2, title, content=bbcode1, description=update_info)
+    bbcode1 = f"[size=3][b]{update_info}[/b][/size]\n\n" + str(db.BBCode(AUCTION_ID))
+    edit_post_n2 = api.full_edit(4, topic_id, post_n2, title, content=bbcode1, description=update_info)
     post_result_n2 = json.loads(edit_post_n2)
 
     if post_result_n2['data'] != 'error':

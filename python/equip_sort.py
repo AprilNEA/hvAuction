@@ -1,23 +1,17 @@
-import requests
-import csv
-import sqlite3
+from python.package.hvapi import HVAPI
+from python.package.databasesq3 import DATABASE
 import json
-from operator import itemgetter, attrgetter
 
-SERVER = 'http://hk.sukeycz.com:3001'
-db_name = r'D:\Github\hvAuction\python\package\auction.db'
+config = json.load(open('config.json'))
+api = HVAPI(config['api_server'])
+db = DATABASE(config['database'])
+AUCTION_ID = 'ISK005'
 
 Mat, One, Two, Sta, Shd, Clo, Lig, Hea = [], [], [], [], [], [], [], []
 
 
-def equip_allinfo(link):
-    url = f'{SERVER}/hv/equip/?url={link}'
-    response = requests.get(url)
-    return response.json()
-
-
 def smallinfo(link):
-    allinfo = equip_allinfo(link)
+    allinfo = api.equip_allinfo(link)
     features = str(allinfo['data']['level'])  # features(前置等级) 准备输出精简属性
     percentiles = allinfo['data']['percentile']
     forging = allinfo['data']['forging']
@@ -61,17 +55,6 @@ def equip_in(info, seller, link):
     info["info_small"] = smallinfo(link)
     info["category_3"] = category
     eval(f'{category}.append({info})')
-
-
-def add(table, key, seller, name, link, features):
-    conn = sqlite3.connect(db_name)
-    c = conn.cursor()
-    sql = f"INSERT INTO {table}(ID,SELLER,NAME,LINK,FEATURES) VALUES ('{key}','{seller}','{name}','{link}','{features}')"
-    c.execute(sql)
-    conn.commit()
-    print(f'Record {key},{seller},{name},{features} created successfully')
-    conn.close()
-
 
 def weight(equip):
     sort_quality = {
@@ -182,30 +165,37 @@ def weight(equip):
         "Warding": 8,
         "": 10
     }
-    weig = sort_quality[equip["quality"]] * 10000 + sort_slot[equip["slot"]] * 1000 + sort_type[equip["type"]] * 100 + \
+    weig = sort_quality[equip["quality"]] * 100000 + sort_slot[equip["slot"]] * 1000 + sort_type[equip["type"]] * 100 + \
            sort_prefix[equip["prefix"]] * 10 + sort_suffix[equip["suffix"]]
     return weig
 
 
 if __name__ == '__main__':
-    # csv: seller url if_mat
-    equipdate = csv.reader(open('data/equip_info/4.csv', 'r', encoding='utf-8-sig'))
+    aution_mail, not_auction_mail = api.mail_list()
+    print('邮件获取完毕')
 
     # 对材料进行特殊处理
     mat_count = 0
-    for i in equipdate:
-        if str(i[3]) == '1':
-            mat_count += 1
-            if mat_count <= 9:
-                mat_count_str = f'0{mat_count}'
-            else:
-                mat_count_str = mat_count
-            add('ISK004', f'Mat{mat_count_str}', i[0], i[1], '0', '0')
-            print(f'Mat{mat_count_str}', i[0], i[1])
-        else:
-            a = equip_allinfo(i[1])["data"]
-            if a != None:
-                equip_in(a, i[0], i[1])
+    print(not_auction_mail)
+    for mail in aution_mail:
+
+        if 'attachments' in mail:
+            if 'items' in mail['attachments']:
+                for item in mail['attachments']['items']:
+                    mat_count += 1
+                    if mat_count <= 9:
+                        mat_count_str = f'0{mat_count}'
+                    else:
+                        mat_count_str = mat_count
+                    db.add('ISK005', f'Mat{mat_count_str}', mail['seller'], item, '0', '0')
+                    print(f'Mat{mat_count_str}',  mail['seller'], item)
+
+            if 'equips' in mail['attachments']:
+                for equip in mail['attachments']['equips']:
+                    equip_link = mail['attachments']['equips'][equip]
+                    equip_info = api.equip_allinfo(equip_link)["data"]
+                if equip_info != None:
+                    equip_in(equip_info, mail['seller'], equip_link)
 
     for equip_set in One, Two, Sta, Shd, Clo, Lig, Hea:
         equip_set = sorted(equip_set, key=lambda equip: weight(equip))
@@ -218,5 +208,5 @@ if __name__ == '__main__':
             else:
                 count_str = count
             # def add(table,key,seller,name,link,features):
-            add('ISK004', f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info_small"])
+            db.add('ISK005', f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info_small"])
             print(f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info"])
