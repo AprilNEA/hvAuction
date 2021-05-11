@@ -16,11 +16,7 @@ export async function quickEditPost(req: express.Request, res: express.Response)
       || req.body && req.body.content && typeof req.body.content !== 'undefined'
     )
   ) {
-    const pageHtml = await getPage(`https://forums.e-hentai.org/index.php?showtopic=${req.params.id}`, {
-      headers: {
-        cookie: `ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
-      }
-    });
+    const pageHtml = await getPage(`https://forums.e-hentai.org/index.php?showtopic=${req.params.id}`, {}, true);
 
     if (pageHtml) {
       const md5CheckMatches = pageHtml.match(/ipb_md5_check\s+=\s"([\w\W]+?)";/);

@@ -24,11 +24,7 @@ interface MoogleMailInfo {
 
 export async function parseMoogleMailList(isIsekai = false): Promise<string[]> {
   const url = isIsekai ? 'https://hentaiverse.org/isekai/?s=Bazaar&ss=mm&filter' : 'https://hentaiverse.org/?s=Bazaar&ss=mm&filter';
-  const html = await getPage(url, {
-    headers: {
-      cookie: `ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
-    }
-  });
+  const html = await getPage(url, {}, true);
 
   if (html) {
     const $ = cheerio.load(html);
@@ -67,11 +63,7 @@ export async function parseMoogleMailList(isIsekai = false): Promise<string[]> {
 
 export async function parseSingleMoogleMail(isIsekai = false, mid: string): Promise<MoogleMailInfo | null> {
   const url = isIsekai ? `https://hentaiverse.org/isekai/?s=Bazaar&ss=mm&filter=inbox&mid=${mid}` : `https://hentaiverse.org/?s=Bazaar&ss=mm&filter=inbox&mid=${mid}`;
-  const html = await getPage(url, {
-    headers: {
-      cookie: `ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
-    }
-  });
+  const html = await getPage(url, {}, true);
 
   if (html) {
     const $ = cheerio.load(html);

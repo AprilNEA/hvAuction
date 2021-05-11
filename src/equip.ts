@@ -19,11 +19,7 @@ export async function fetchEquipmentInfo(req: express.Request, res: express.Resp
 
         return;
       }
-      const html = await getPage(req.query.url, {
-        headers: {
-          cookie: `ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
-        }
-      });
+      const html = await getPage(req.query.url, {}, true);
 
       if (html) {
         const data = parseEquipmentFromDocument(html);

@@ -1,5 +1,6 @@
 import got, { OptionsOfTextResponseBody, Response } from 'got';
 import hexoLogger from 'hexo-log';
+import deepmerge from 'deepmerge';
 
 const log = hexoLogger();
 const cache = new Map();
@@ -147,7 +148,7 @@ class FetchQueue {
       got(item.url, {
         retry: { limit: 2 },
         headers: {
-          'User-Agent': 'Mozilla/5.0 New Auction'
+          'User-Agent': 'Mozilla/5.0 Xuan\'s Auction'
         },
         cache,
         ...item.init
@@ -200,8 +201,17 @@ setInterval(() => {
   cache.clear();
 }, 60000);
 
-export async function getPage(url: string, options?: OptionsOfTextResponseBody): Promise<string | undefined> {
+export async function getPage(url: string, options?: OptionsOfTextResponseBody, enableCookie?: boolean): Promise<string | undefined> {
   log.info('[getPage] Fetching Page:', url);
+
+  if (enableCookie) {
+    options = deepmerge(options || {}, {
+      headers: {
+        cookie: `${(options?.headers?.cookie) ? (`${options.headers.cookie};`) : ''}ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
+      }
+    });
+  }
+
   const { body } = await fetchQueue.add(url, options);
   return body;
 }

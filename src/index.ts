@@ -1,13 +1,16 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import hexoLogger from 'hexo-log';
+import cors from 'cors';
+
 import { bidItemsRequestHandler, repliesListRequestHandler } from './auction';
 import { fetchEquipmentInfo } from './equip';
 import { quickEditPost } from './thread';
-import cors from 'cors';
 import { requestCredential } from './lib/middleware/requestEhCredential';
 import { fullEditPost } from './lib/editPost/full_edit';
 import { getMoogleMailList, parseMoogleMail } from './mooglemail';
+
+require('make-promises-safe');
 
 dotenv.config();
 
@@ -15,9 +18,6 @@ dotenv.config();
   const log = hexoLogger();
 
   const app = express();
-
-  const { hv_api_port: hvApiPort } = process.env;
-  const port = isNaN(Number(hvApiPort)) ? 3001 : Number(hvApiPort);
 
   app.use(express.json({
     limit: '2mb'
@@ -59,6 +59,8 @@ dotenv.config();
   // @example /hv/mooglemail/mail/114514?isekai=1
   app.get('/hv/mooglemail/mail/:mid', requestCredential, parseMoogleMail);
 
+  const { hv_api_port: hvApiPort } = process.env;
+  const port = isNaN(Number(hvApiPort)) ? 3001 : Number(hvApiPort);
   app.listen(port, () => {
     log.info('[Main]', `API Server listening at http://localhost:${port}`);
   });
