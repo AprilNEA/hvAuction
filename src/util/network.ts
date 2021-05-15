@@ -134,7 +134,8 @@ class FetchQueue {
       if (this.timer) {
         clearTimeout(this.timer);
       }
-      this.timer = setTimeout(this.checkNext, threshold - now) as unknown as number;
+
+      this.timer = setTimeout(() => { this.checkNext(); }, threshold - now) as unknown as number;
       return;
     }
 
@@ -183,11 +184,7 @@ class FetchQueue {
     }
 
     this.lastCalled = Date.now();
-    if (this.pendingCount > 0) {
-      this.timer = setTimeout(this.checkNext, this.options?.interval || 300) as unknown as number;
-    } else {
-      this.timer = undefined;
-    }
+    this.timer = setTimeout(this.checkNext, this.options?.interval || 300) as unknown as number;
   }
 }
 
