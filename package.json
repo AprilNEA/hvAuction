@@ -4,18 +4,19 @@
   "description": "Auction",
   "private": true,
   "dependencies": {
-    "@types/cheerio": "^0.22.26",
     "cheerio": "^1.0.0-rc.5",
     "cors": "^2.8.5",
+    "deepmerge": "^4.2.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
     "got": "^11.8.2",
     "hexo-log": "^2.0.0",
-    "node-cache": "^5.1.2"
+    "make-promises-safe": "^5.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.15",
+    "@types/cheerio": "^0.22.28",
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/mocha": "^8.2.1",

@@ -22,23 +22,22 @@ interface MoogleMailInfo {
   cod?: number
 }
 
-export async function parseMoogleMailList(isIsekai = false): Promise<string[]> {
-  const url = isIsekai ? 'https://hentaiverse.org/isekai/?s=Bazaar&ss=mm&filter' : 'https://hentaiverse.org/?s=Bazaar&ss=mm&filter';
-  const html = await getPage(url, {
-    headers: {
-      cookie: `ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
-    }
-  });
+async function moogleMailPageParser(url: string): Promise<{ results: string[], nextPage: string | null }> {
+  const html = await getPage(url, {}, true);
 
   if (html) {
     const $ = cheerio.load(html);
 
     if ($('#mmail_nnm').length > 0) {
       log.info('[MoogleMail]', 'No new mooglemail found');
-      return [];
+      return {
+        results: [],
+        nextPage: null
+      };
     }
 
     const results: string[] = [];
+    let nextPageUrl: string | null = null;
 
     const $mooglemailList = $('#mmail_list tr');
 
@@ -59,19 +58,53 @@ export async function parseMoogleMailList(isIsekai = false): Promise<string[]> {
       }
     });
 
-    return results;
+    const $mooglemailPager = $('#mmail_pager a');
+    $mooglemailPager.each((i, el) => {
+      if ($(el).text().includes('Next')) {
+        const href = $(el).attr('href');
+
+        if (href) {
+          nextPageUrl = href;
+        }
+      }
+    });
+
+    return {
+      results,
+      nextPage: nextPageUrl
+    };
   }
 
-  return [];
+  return {
+    results: [],
+    nextPage: null
+  };
+}
+
+async function parseMoogleMailWalker(url: string, midList: string[] = []): Promise<string[]> {
+  const { results, nextPage } = await moogleMailPageParser(url);
+  if (results) {
+    midList.push(...results);
+  }
+  if (nextPage) {
+    await parseMoogleMailWalker(nextPage, midList);
+  }
+
+  return midList;
+}
+
+export async function parseMoogleMailList(isIsekai = false): Promise<string[]> {
+  const url = isIsekai ? 'https://hentaiverse.org/isekai/?s=Bazaar&ss=mm&filter=inbox' : 'https://hentaiverse.org/?s=Bazaar&ss=mm&filter=inbox';
+
+  const results: string[] = [];
+  await parseMoogleMailWalker(url, results);
+
+  return results;
 }
 
 export async function parseSingleMoogleMail(isIsekai = false, mid: string): Promise<MoogleMailInfo | null> {
   const url = isIsekai ? `https://hentaiverse.org/isekai/?s=Bazaar&ss=mm&filter=inbox&mid=${mid}` : `https://hentaiverse.org/?s=Bazaar&ss=mm&filter=inbox&mid=${mid}`;
-  const html = await getPage(url, {
-    headers: {
-      cookie: `ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
-    }
-  });
+  const html = await getPage(url, {}, true);
 
   if (html) {
     const $ = cheerio.load(html);
@@ -109,7 +142,6 @@ export async function parseSingleMoogleMail(isIsekai = false, mid: string): Prom
     } = {};
     const dynjsEqstoreMatches = html.match(rMatchDynjsEqStore);
     if (dynjsEqstoreMatches) {
-      console.log(dynjsEqstoreMatches);
       dynjsEqstore = JSON.parse(dynjsEqstoreMatches[1]);
     }
 

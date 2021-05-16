@@ -1,11 +1,9 @@
 import got, { OptionsOfTextResponseBody, Response } from 'got';
-import Cache from 'node-cache';
 import hexoLogger from 'hexo-log';
+import deepmerge from 'deepmerge';
 
 const log = hexoLogger();
-const cache = new Cache({
-  stdTTL: 6
-});
+const cache = new Map();
 
 /** Options for the fetch queue and all fetch requests. */
 interface IFetchQueueOptions {
@@ -31,7 +29,6 @@ enum ItemState {
 interface IQueueItem {
   readonly url: string;
   readonly init?: OptionsOfTextResponseBody;
-  readonly disableCache?: boolean;
   readonly resolve: (value: Response) => void;
   readonly reject: (reason?: any) => void;
   state: ItemState;
@@ -83,10 +80,10 @@ class FetchQueue {
    * @param init Request init for fetch() API
    * @returns {IFetchQueuePromise} Request promise that can also cancel the request.
    */
-  public add(url: string, init?: OptionsOfTextResponseBody, disableCache?: boolean): IFetchQueuePromise<Response<string>> {
+  public add(url: string, init?: OptionsOfTextResponseBody): IFetchQueuePromise<Response<string>> {
     let item: IQueueItem;
     const promise = new Promise((resolve, reject) => {
-      item = { url, init, resolve, reject, state: ItemState.Pending, disableCache };
+      item = { url, init, resolve, reject, state: ItemState.Pending };
       this.pendingItems.push(item);
     }) as IFetchQueuePromise;
     promise.cancel = () => this.cancel(item);
@@ -137,7 +134,8 @@ class FetchQueue {
       if (this.timer) {
         clearTimeout(this.timer);
       }
-      this.timer = setTimeout(this.checkNext, threshold - now) as unknown as number;
+
+      this.timer = setTimeout(() => { this.checkNext(); }, threshold - now) as unknown as number;
       return;
     }
 
@@ -148,28 +146,28 @@ class FetchQueue {
       this.activeItems.push(item);
       item.state = ItemState.Active;
 
-      if (cache.has(item.url) && (item.init?.method === 'GET' || typeof item.init === 'undefined') && item.disableCache !== true) {
-        log.debug('[FetchQueue]', `Cache Hit: ${item.url}`);
-        this.handleResult(item, ItemState.Succeeded, cache.get(item.url));
-      } else {
-        log.debug('[FetchQueue]', `Cache Miss: ${item.url}`);
+      got(item.url, {
+        retry: { limit: 2 },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 Xuan\'s Auction'
+        },
+        cache,
+        ...item.init
+      }).then(
+        (resp) => {
+          if (resp.isFromCache) {
+            log.info('[FetchQueue]', 'Hit from cache');
+          } else {
+            log.info('[FetchQueue]', 'Miss from cache');
+          }
 
-        got(item.url, {
-          retry: { limit: 2 },
-          headers: {
-            'User-Agent': 'Mozilla/5.0 New Auction'
-          },
-          ...item.init
-        }).then(
-          (resp) => {
-            if ((resp.statusCode >= 200 && resp.statusCode < 300 || resp.statusCode === 304) && (item.init?.method === 'GET' || typeof item.init === 'undefined')) {
-              cache.set(item.url, resp);
-            }
-            this.handleResult(item, ItemState.Succeeded, resp);
-          },
-          (reason) => this.handleResult(item, ItemState.Failed, reason)
-        );
-      }
+          if ((resp.statusCode >= 200 && resp.statusCode < 300 || resp.statusCode === 304) && (item.init?.method === 'GET' || typeof item.init === 'undefined')) {
+            cache.set(item.url, resp);
+          }
+          this.handleResult(item, ItemState.Succeeded, resp);
+        },
+        (reason) => this.handleResult(item, ItemState.Failed, reason)
+      );
     }
   }
 
@@ -186,21 +184,31 @@ class FetchQueue {
     }
 
     this.lastCalled = Date.now();
-    if (this.pendingCount > 0) {
-      this.timer = setTimeout(this.checkNext, this.options?.interval || 300) as unknown as number;
-    } else {
-      this.timer = undefined;
-    }
+    this.timer = setTimeout(this.checkNext, this.options?.interval || 300) as unknown as number;
   }
 }
 
-const fetchQueue = new FetchQueue({
+export const fetchQueue = new FetchQueue({
   maxConnections: 4,
   interval: 300
 });
 
-export async function getPage(url: string, options?: OptionsOfTextResponseBody): Promise<string | undefined> {
+// Flush cache every 60 seconds
+setInterval(() => {
+  cache.clear();
+}, 60000);
+
+export async function getPage(url: string, options?: OptionsOfTextResponseBody, enableCookie?: boolean): Promise<string | undefined> {
   log.info('[getPage] Fetching Page:', url);
+
+  if (enableCookie) {
+    options = deepmerge(options || {}, {
+      headers: {
+        cookie: `${(options?.headers?.cookie) ? (`${options.headers.cookie};`) : ''}ipb_member_id=${process.env.ipb_member_id}; ipb_pass_hash=${process.env.ipb_pass_hash}`
+      }
+    });
+  }
+
   const { body } = await fetchQueue.add(url, options);
   return body;
 }
