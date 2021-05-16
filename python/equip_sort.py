@@ -56,7 +56,7 @@ def equip_in(info, seller, link):
     info["category_3"] = category
     eval(f'{category}.append({info})')
 
-def weight(equip):
+def weight_equip(equip):
     sort_quality = {
         "Superior": 5,
         "Exquisite": 4,
@@ -169,36 +169,92 @@ def weight(equip):
            sort_prefix[equip["prefix"]] * 10 + sort_suffix[equip["suffix"]]
     return weig
 
+def weight_item(item):
+    weight = 0
+    if "Scroll" or "Infusion" or "Vase" or "Gum" in item:
+        weight -= 3000
+    if "Draught" or "Potion" or "Elixir" in item:
+        weight -= 4000
+
+    if "Low" in item:
+        weight += 100
+    if "Mid" in item:
+        weight += 200
+    if "High" in item:
+        weight += 300
+
+    if "Cloth" in item:
+        weight += 4000
+    if "Leather" in item:
+        weight += 3000
+    if "Metals" in item:
+        weight += 2000
+    if "Wood" in item:
+        weight += 1000
+
+    if "Crystallized Phazon" in item:
+        weight += 104
+    if "Shade Fragment" in item:
+        weight += 103
+    if "Repurposed Actuator" in item:
+        weight += 102
+    if "Defense Matrix Modulator" in item:
+        weight += 101
+
+    if "Scrap" or "Energy Cell" in item:
+        weight -= 2000
+    if "Diluted Catalyst" in item:
+        weight -= 1000
+    if "Shard" in item:
+        weight -= 500
+
+    return weight
+
+
+
 
 if __name__ == '__main__':
-    aution_mail, not_auction_mail = api.mail_list()
+    auction_mail, not_auction_mail = api.mail_list()
     print('邮件获取完毕')
-
+    item_list = []
     # 对材料进行特殊处理
     mat_count = 0
-    print(not_auction_mail)
-    for mail in aution_mail:
+    #print(not_auction_mail)
+    print(auction_mail)
+    exit()
+    for mail in auction_mail:
 
         if 'attachments' in mail:
             if 'items' in mail['attachments']:
                 for item in mail['attachments']['items']:
-                    mat_count += 1
-                    if mat_count <= 9:
-                        mat_count_str = f'0{mat_count}'
-                    else:
-                        mat_count_str = mat_count
-                    db.add('ISK005', f'Mat{mat_count_str}', mail['seller'], item, '0', '0')
-                    print(f'Mat{mat_count_str}',  mail['seller'], item)
+                    item = {
+                        'seller': mail['seller'],
+                        'item_name': item
+                    }
+                    item_list.append(item)
 
             if 'equips' in mail['attachments']:
                 for equip in mail['attachments']['equips']:
                     equip_link = mail['attachments']['equips'][equip]
                     equip_info = api.equip_allinfo(equip_link)["data"]
-                if equip_info != None:
-                    equip_in(equip_info, mail['seller'], equip_link)
+                    if equip_info != None:
+                        equip_in(equip_info, mail['seller'], equip_link)
+
+    count = 0
+    for items in item_list:
+        print(items)
+        count += 1
+        if count <= 9:
+            count_str = f'0{count}'
+        else:
+            count_str = count
+        # def add(table,key,seller,name,link,features):
+        db.add('ISK005', f'Mat{count_str}', items['seller'], items['item_name'], '0', '0')
+        print(f'Mat{count_str}', items['seller'], items['item_name'])
+
 
     for equip_set in One, Two, Sta, Shd, Clo, Lig, Hea:
-        equip_set = sorted(equip_set, key=lambda equip: weight(equip))
+        equip_set = sorted(equip_set, key=lambda equip: weight_equip(equip))
         print(equip_set)
         count = 0
         for i in equip_set:
@@ -210,3 +266,8 @@ if __name__ == '__main__':
             # def add(table,key,seller,name,link,features):
             db.add('ISK005', f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info_small"])
             print(f'{i["category_3"]}{count_str}', i["seller"], i["bbcode"], i["link"], i["info"])
+
+    item_list = sorted(item_list, key=lambda item: weight_item(item['item_name']), reverse=True)
+
+
+

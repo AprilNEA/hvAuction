@@ -89,6 +89,17 @@ class HVInterface(object):
         resp = bs(resp.text, 'html.parser')
         assert resp.find('img', onclick='mooglemail.remove_attachment(0)')
 
+    def attach_items(self, mm_token, item_id, quantity):
+        new_mail_url = 'http://alt.hentaiverse.org/?s=Bazaar&ss=mm&filter=new'
+        resp = self.session.post(new_mail_url, data={
+            'action': 'attach_add',
+            'action_value': 0,
+            'select_item': item_id,
+            'select_count': quantity,
+            'mmtoken': mm_token,
+            'select_pane': 'item'})
+        resp = bs(resp.text, 'html.parser')
+        assert resp.find('img', onclick='mooglemail.remove_attachment(0)')
 
     def set_cod(self, mm_token, cod_amount):
         if cod_amount > 0:

@@ -1,12 +1,11 @@
 [center][img]http://skeimg.com/i/2021/04/03/zigcqn.png[/img]
-[img]https://pure-svg-countdown.skk.moe/timer?title=Xuan%27s%20Auction%204&finish=Ended&time=2021-04-18T12:00:00.000Z#.gif[/img][/center]
+[img]https://pure-svg-countdown.skk.moe/timer?title=Xuan%27s%20Auction%204&finish=Ended&time=2021-05-16T07:00:00.000Z#.gif[/img][/center]
 [center][color=#33FF33][size=5]Only For Persistent Credits[/size][/color][/center]
 
 
 [size=3][list]
-[*]The expected functions in the auction have been basically realized, but they are still [b]under test[/b] and will be launched one after another.
-[*]Thanks to [b]OnceForAll[/b] for making a new timer.
-[*]And [b]paperplane07[/b] made the LOGO.
+[*]Thanks to [b]OnceForAll[/b]'s help.
+
 [/list][/size]
 
 [color=#006600]Automatic price updates will now occur every 15 minutes.[/color]
@@ -21,10 +20,12 @@ All posted bids should be in president credits in multiples of 1k and must immed
 [*]One05 I will bid 400k is invalid.
 [/list]
 
-[size=3][b]Minimum bid increments:[/b][/size]
+[size=3][b]Auction bid:[/b][/size]
 [list]
 [*]Start/Minimum bid: 50k
-[*]Add at least 50k each time
+[*]Add at least 5% of last bid each time
+[*]If the price has been updated, it cannot be cancelled
+
 [/list]
 
 If you want me to auction an item for you, feel free to send stuff any time.

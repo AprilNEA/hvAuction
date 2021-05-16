@@ -57,20 +57,22 @@ class HVAPI:
             url = f'{self.SERVER}/hv/mooglemail/list?isekai=1'
         else:
             url = f'{self.SERVER}/hv/mooglemail/list'
-
         mid_list = requests.get(url).json()['data']
         auction_mail = []
         not_auction_mail = []
         print(mid_list)
+
         for mid in mid_list:
+
             if isk:
                 mid_url = f"{self.SERVER}/hv/mooglemail/mail/{mid}?isekai=1"
             else:
                 mid_url = f"{self.SERVER}/hv/mooglemail/mail/{mid}"
+
             mid_out = requests.get(mid_url).json()
 
             if mid_out['code'] == 0 and mid_out['msg'] == 'OK':
-                print(mid_out)
+                #print(mid_out)
                 if 'Auction' in mid_out['data']['title'] or 'auction' in mid_out['data']['title']:
                     auction_mail.append({
                         "seller": mid_out['data']['sender'],
@@ -78,10 +80,12 @@ class HVAPI:
                         "content": mid_out['data']['content'],
                         "mmtoken": mid_out['data']['mmtoken'],
                         "cod": mid_out['data']['cod'],
-                        "attachments": mid_out['data']['attachments']
+                        "attachments": mid_out['data']['attachments'],
+                        "mid": mid,
                     })
                 else:
-                    not_auction_mail.append(mid)
+                    #not_auction_mail.append(mid)
+                    auction_mail.append(mid)
             else:
                 print(f'{mid}出错:{mid_out}')
                 return 0

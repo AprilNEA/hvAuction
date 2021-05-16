@@ -56,6 +56,37 @@ class DATABASE:
         conn.close()
         return winner, price
 
+    # 根据主键搜索
+    def search_mat(self, table, name):
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+        seller = 0
+        winner = 0
+        price = 0
+        cursor = c.execute(
+            f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table} where NAME = '{name}'")
+        for row in cursor:
+            seller = row[1]
+            winner = row[6]
+            price = row[5]
+        conn.close()
+        return seller, winner, price
+
+    # 根据主键搜索
+    def search_equip(self, table, link):
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+        seller = 0
+        winner = 0
+        price = 0
+        cursor = c.execute(
+            f"SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from {table} where LINK = '{link}'")
+        for row in cursor:
+            seller = row[1]
+            winner = row[6]
+            price = row[5]
+        conn.close()
+        return seller, winner, price
     # 形成BBCode
     def BBCode(self, table):
         conn = sqlite3.connect(self.db_name)
@@ -95,18 +126,18 @@ class DATABASE:
                 elif price >= 10000:
                     price = str(round(price / 1000, 2)) + "k"
                 if row[0].find('Mat') != -1:
-                    out = out + f'[{row[0]}] {row[2]} (seller:{row[1]})[b]{row[6]} {price} [/b]{row[8]}\n'
+                    out = out + f'[{row[0]}] {row[2]} (seller:{row[1]})[b]{row[6]} {price} [/b] {row[8]}\n'
                 else:
                     bbcode = api.equip_allinfo(row[3])["data"]["bbcode"]
                     #out = out + f'[{row[0]}] [url={row[3]}]{row[2]}[/url] ({row[4]}) (seller:{row[1]})[b]{row[6]} {price} [/b]{row[8]}\n'
-                    out = out + f'[{row[0]}] [url={row[3]}]{bbcode}[/url] ({row[4]}) (seller:{row[1]})[b]{row[6]} {price} [/b]{row[8]}\n'
+                    out = out + f'[{row[0]}] [url={row[3]}]{bbcode}[/url] ({row[4]}) (seller:{row[1]})[b]{row[6]} {price} [/b] {row[8]}\n'
 
             else:
                 if row[0].find('Mat') != -1:
                     out = out + f'[{row[0]}] {row[2]} (seller:{row[1]})\n'
                 else:
                     bbcode = api.equip_allinfo(row[3])["data"]["bbcode"]
-                    if row[0] == "None":
+                    if row[0] == "Hea05":
                         out = out + f'[s][{row[0]}] [url={row[3]}]{bbcode}[/url] ({row[4]}) (seller:{row[1]})[/s]\n'
                     else:
                     #out = out + f'[{row[0]}] [url={row[3]}]{row[2]}[/url] ({row[4]}) (seller:{row[1]})\n'
