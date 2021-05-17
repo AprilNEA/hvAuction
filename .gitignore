@@ -9,4 +9,4 @@ dist
 .env
 *.ini
 __pycache__
-python/config.json
+conf/config.json

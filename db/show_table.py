@@ -2,9 +2,9 @@
 
 import sqlite3
 
-conn = sqlite3.connect(r"D:\\Github\\hvAuction\\python\\data\\auction.db")
+conn = sqlite3.connect(r"/data\\auction.db")
 c = conn.cursor()
-print("Opened database successfully")
+print("Opened db successfully")
 
 cursor = c.execute("SELECT ID,SELLER,NAME,LINK,FEATURES,PRICE,WINNER,TIME,LOG from ISK005")
 

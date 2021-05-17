@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
-from python.package.hvapi import HVAPI
-from package.databasesq3 import *
+from db import HVAPI
 from bs4 import BeautifulSoup as bs
 
 config = json.load(open('python/config.json'))
 api = HVAPI(config['api_server'])
-db = DATABASE(config['database'])
+db = DATABASE(config['db'])
 AUCTION_ID = 'ISK005'
 config = json.load(open('python/config.json'))
 

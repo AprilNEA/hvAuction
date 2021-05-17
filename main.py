@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from package.hvapi import *
-from package.databasesq3 import *
 import json
 import time
+from api.api import *
+from db.databasesq3 import *
 
-
-config = json.load(open('config.json'))
+config = json.load(open('conf/config.json'))
 api = HVAPI(config['api_server'])
-db = DATABASE(config['database'])
+db = DATABASE(config['db'])
 AUCTION_ID = 'ISK005'
 
 def price_abb_conver(price):
@@ -87,7 +86,7 @@ def main():
     post_n1 = 5909488
     post_n2 = 5909489
     ###———————###
-    with open(r'D:\Github\hvAuction\python\data\auction_stauts.json', 'rb') as f:
+    with open(r'/data\auction_stauts.json', 'rb') as f:
         status = json.load(f)
         lastestID = status["ProceedToID"]
 
@@ -96,7 +95,7 @@ def main():
     lastestID_get = update_price(lastestID, topic_id, auctionDbTable)
     if lastestID_get == lastestID:
         return 0
-    with open(r'D:\Github\hvAuction\python\data\auction_stauts.json', 'w') as r:
+    with open(r'/data\auction_stauts.json', 'w') as r:
         status_dict = {
             "ProceedToID": lastestID_get
         }
@@ -106,7 +105,7 @@ def main():
     # update_info = "Update to " + update_price(topic_id, datebaseID) + " | Ended"  # 拍卖进展信息
 
     # 第一帖信息：时间，规则，banlist，forbiddenlist
-    content_1 = open("bbcode/isekai_auction_n1.txt",).read()
+    content_1 = open("core/bbcode/isekai_auction_n1.txt", ).read()
     edit_post_n1 = api.full_edit(forum=4, id=topic_id, postId=post_n1, title=title, content=content_1,
                                  description=update_info)
     post_result_n1 = json.loads(edit_post_n1)

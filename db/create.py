@@ -2,7 +2,7 @@ import sqlite3
 
 conn = sqlite3.connect(r'D:\Github\hvAuction\python\data\auction.db')
 
-print("Opened package successfully")
+print("Opened db successfully")
 c = conn.cursor()
 c.execute('''
 CREATE TABLE ISK005

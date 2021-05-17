@@ -6,7 +6,7 @@ class HVInterface(object):
     def __init__(self, session):
         self.session = session
 
-    #this is the very basic first part: it gets the mail inbox, then performs the 'accept_mail' package for each mail ID found
+    #this is the very basic first part: it gets the mail inbox, then performs the 'accept_mail' db for each mail ID found
     #获取邮件
     def fetch_mail(self):
         url = 'http://alt.hentaiverse.org/?s=Bazaar&ss=mm&filter=inbox'

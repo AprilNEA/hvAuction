@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
-from python.package.hvapi import HVAPI
-from package.databasesq3 import *
+from db import HVAPI
 from bs4 import BeautifulSoup as bs
 
-config = json.load(open('D:\Github\hvAuction\python\config.json'))
+config = json.load(open('/conf/config.json'))
 api = HVAPI(config['api_server'])
-db = DATABASE(config['database'])
+db = DATABASE(config['db'])
 AUCTION_ID = 'ISK005'
 
 HVLOGINURL = f"http://alt.hentaiverse.org/isekai/login?ipb_member_id={config['ipb_member_id']}&ipb_pass_hash={config['ipb_pass_hash']}"

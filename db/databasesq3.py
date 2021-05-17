@@ -1,4 +1,4 @@
-from .hvapi import HVAPI
+from api.api import HVAPI
 import sqlite3
 
 api = HVAPI(r'http://hk.sukeycz.com:3001')

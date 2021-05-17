@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
-from python.package.hvapi import HVAPI
-from package.databasesq3 import *
+from db import HVAPI
 from bs4 import BeautifulSoup as bs
 
-config = json.load(open('D:\Github\hvAuction\python\config.json'))
+config = json.load(open('/conf/config.json'))
 api = HVAPI(config['api_server'])
-db = DATABASE(config['database'])
+db = DATABASE(config['db'])
 AUCTION_ID = 'ISK005'
 
 HVLOGINURL = f"http://alt.hentaiverse.org/login?ipb_member_id={config['ipb_member_id']}&ipb_pass_hash={config['ipb_pass_hash']}"
@@ -23,32 +22,15 @@ def get_mmtoken(url):
     mm_token = resp.find('input', {'name': 'mmtoken'}).get('value')
     return mm_token
 
-def attach_items(mm_token):
+def attach_credits(mm_token, quantity):
     new_mail_url = 'http://alt.hentaiverse.org/?s=Bazaar&ss=mm&filter=new'
     resp = session.post(new_mail_url, data={
         'action': 'attach_add',
         'action_value': 0,
-        'select_item': 11191,
-        'select_count': 1,
+        'select_item': 0,
+        'select_count': int(quantity),
         'mmtoken': mm_token,
-        'select_pane': 'item'})
-    resp = bs(resp.text, 'html.parser')
-    assert resp.find('img', onclick='mooglemail.remove_attachment(0)')
-    return True
-
-def set_cod(mm_token, cod_amount):
-    if cod_amount > 0:
-        cod_amount = max(cod_amount, 10)  # minimum CoD is 10c, you wont need this
-    new_mail_url = 'http://alt.hentaiverse.org/?s=Bazaar&ss=mm&filter=new'
-    resp = session.post(new_mail_url, data={
-        'action': 'attach_cod',
-        'action_value': cod_amount,
-        'mmtoken': mm_token})
-    resp = bs(resp.text, 'html.parser')
-    find_string = 'Requested Payment on Delivery: ' \
-                  + f"{cod_amount:,}" \
-                  + ' credits'
-    assert resp.find('div', string=find_string)
+        'select_pane': 'credits'})
     return True
 
 def new(mm_token,mm_receiver,mm_subject,mm_body):
@@ -64,10 +46,9 @@ def new(mm_token,mm_receiver,mm_subject,mm_body):
         raise ValueError('Invalid or missing recipient.') # you should handle this
     assert resp.find('div', string='Your message has been sent.')
 
-buyers = {'k1863162': 1400000.0, 'silverporcupine': '600000.0', '프레이': '100000.0', 'sabregimp': '50000.0', 'SPoison': '100000.0'}
+buyers = {'chjj30': 5260000.0, 'Firew': 5850000.0}
 for buyer in buyers:
     new_mail_url = 'http://alt.hentaiverse.org/?s=Bazaar&ss=mm&filter=new'
     mm_token = get_mmtoken(new_mail_url)
-    attach_items(mm_token)
-    set_cod(mm_token,round(float(buyers[buyer])))
-    new(mm_token,buyer, "Xuan's Auction #5", r"Xuan's Auction #5\n Thanks for support")
+    attach_credits(mm_token,round(float(buyers[buyer])))
+    new(mm_token,buyer, "Xuan's Auction #5", r"Xuan's Auction #5 Thanks for support")

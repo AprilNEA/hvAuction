@@ -8,9 +8,8 @@
 # @file: test_api.py
 # @time: 2021/5/1 19:25
 # @desc:
-import requests
 
-from python.package.hvapi import HVAPI
+from db import HVAPI
 
 api = HVAPI(r'http://hk.sukeycz.com:3001')
 

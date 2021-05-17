@@ -1,10 +1,10 @@
-from python.package.hvapi import HVAPI
-from python.package.databasesq3 import DATABASE
+from db import HVAPI
+from db import DATABASE
 import json
 
-config = json.load(open('config.json'))
+config = json.load(open('../conf/config.json'))
 api = HVAPI(config['api_server'])
-db = DATABASE(config['database'])
+db = DATABASE(config['db'])
 AUCTION_ID = 'ISK005'
 
 Mat, One, Two, Sta, Shd, Clo, Lig, Hea = [], [], [], [], [], [], [], []

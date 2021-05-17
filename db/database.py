@@ -38,7 +38,7 @@ def update(table,id,which,key):
 def delete(table,id):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    print("Opened package successfully")
+    print("Opened db successfully")
     sql = f"DELETE from {table} where ID= '{id}';"
     c.execute(sql)
     conn.commit()

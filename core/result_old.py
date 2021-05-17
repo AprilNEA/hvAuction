@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3
-from python.package.hvapi import HVAPI
+from db import HVAPI
 
 api = HVAPI(r'http://hk.sukeycz.com:3001')
 db_name = r'D:\Github\hvAuction\python\data\auction.db'
