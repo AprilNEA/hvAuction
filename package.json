@@ -26,6 +26,7 @@
     "eslint": "^7.21.0",
     "eslint-config-sukka": "^1.1.2",
     "mocha": "^8.3.1",
+    "nodemon": "^2.0.7",
     "ts-mocha": "^8.0.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
@@ -33,6 +34,9 @@
   "scripts": {
     "updateDB": "ts-node tools/fetchDB.ts",
     "build": "tsc",
+    "dev:server": "nodemon --watch './src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "server": "ts-node -T src/index.ts",
+    "prod:server": "node dist",
     "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts"
   },
   "repository": {
